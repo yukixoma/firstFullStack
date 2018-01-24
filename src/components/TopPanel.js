@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 class TopPanel extends Component {
-    render () {
+    render() {
         return (
             <div className="card">
                 <h3 className="card-header">Top Panel</h3>
@@ -9,7 +9,7 @@ class TopPanel extends Component {
                     <div className="row">
                         <div>
                             <div className="card">
-                                <img className="card-img-top" src="" alt="Card image cap"/>
+                                <img className="card-img-top" src="" alt="Card image cap" />
                                 <div className="card-block">
                                     <h3 className="card-title">Special title treatment</h3>
                                 </div>
@@ -17,7 +17,7 @@ class TopPanel extends Component {
                         </div>
                         <div>
                             <div className="card">
-                                <img className="card-img-top" src="" alt="Card image cap"/>
+                                <img className="card-img-top" src="" alt="Card image cap" />
                                 <div className="card-block">
                                     <h3 className="card-title">Special title treatment</h3>
                                 </div>
