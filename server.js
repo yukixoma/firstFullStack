@@ -30,15 +30,13 @@ app.use(webpackHot(compiler));
 
 //Connect to mongodb
 var mongoose = require("mongoose");
-mongoose.connect(process.env.MONGODN_URI || "mongodb://localhost/manga",{
-    useMongoClient: true
-});
+mongoose.connect(process.env.MONGODN_URI || "mongodb://localhost/manga");
 
 
 
 
 
-app.get("/", (req,res) => {
+app.get("*", (req,res) => {
     res.sendFile(path.resolve(__dirname,"index.html"));
 });
 
