@@ -2,7 +2,7 @@
 var mongoose    = require("mongoose");
 var Schema      = mongoose.Schema;
 
-var mangaSchema = newSchema ({
+var mangaSchema = new Schema ({
     name:           String,
     subName:        String,
     cover:          String,
@@ -10,7 +10,8 @@ var mangaSchema = newSchema ({
     group:          String,
     genre:          Array,
     description:    String,
-    status:         String
+    status:         String,
+    username:       String
 },{timestamps: true});
 
 var ModelClass = mongoose.model("manga",mangaSchema);

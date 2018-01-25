@@ -30,10 +30,11 @@ app.use(webpackHot(compiler));
 
 //Connect to mongodb
 var mongoose = require("mongoose");
+var manga = require("./models/manga");
 mongoose.connect(process.env.MONGODN_URI || "mongodb://localhost/manga");
 
-//Connect to model
-var manga = require("./models/manga");
+
+
 
 
 app.get("*", (req,res) => {
@@ -41,7 +42,30 @@ app.get("*", (req,res) => {
 });
 
 app.post("/new",upload.single("file"), (req,res) => {
-    
+    var name = req.body.name;
+    var subName = req.body.subName;
+    var cover = req.file.path;
+    var author = req.body.author;
+    var group = req.body.group;
+    var genre = req.body.genre.split(", ");
+    var description = req.body.description;
+    var status = req.body.name;
+    var username = "yukixoma"
+    var newManga = new manga ({
+       name: name,
+       subName: subName,
+       cover: cover,
+       author: author,
+       group: group,
+       genre: genre,
+       description: description,
+       status: status,
+       username: username       
+    });
+    newManga.save(err=>{
+        if(err) throw err;
+        console.log(newManga);
+    })
 });
 
 
