@@ -11,7 +11,7 @@ class HomePage extends Component {
                 <TopPanel />
                 <div className="row">
                     <div className="col-3"><MainLeft /></div>
-                    <div className="col-6 main-center"><MainCenter /></div>
+                    <div className="col-6"><MainCenter /></div>
                     <div className="col-3"><MainRight /></div>
                 </div>
             </Fragment>

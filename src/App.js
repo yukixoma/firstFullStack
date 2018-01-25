@@ -4,6 +4,8 @@ import Navbar from './components/Navbar';
 import Header from './components/Header';
 import { HashRouter, Route, Switch } from 'react-router-dom';
 import Home from './Pages/Home';
+import Upload from './components/Upload';
+
 
 
 class App extends Component {
@@ -15,6 +17,7 @@ class App extends Component {
                     <Navbar /> 
                     <Switch>
                         <Route path="/" exact component={Home} />
+                        <Route path="/upload" exact component={Upload} />
                     </Switch>          
                 </Fragment>
             </HashRouter>

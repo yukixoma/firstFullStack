@@ -24,6 +24,9 @@ class Navbar extends Component {
                         <li className="nav-item">
                             <a className="nav-link" href="#">Genre</a>
                         </li>
+                        <li className="nav-item">
+                            <NavLink className="nav-link" to="/upload"> Upload </NavLink>
+                        </li>
                     </ul>
                     <form className="form-inline my-2 my-lg-0">
                         <input className="form-control mr-sm-2" type="text" placeholder="Search" />

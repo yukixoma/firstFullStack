@@ -2,9 +2,12 @@ body {
     background-color: grey;
 }
 
-.main-center {
-    width: 100%;
-}
 .main-item {
     width: 100%;
 }
+
+.home-page-cover {
+    max-width: 100% !important;
+    height: auto !important;
+}
+
