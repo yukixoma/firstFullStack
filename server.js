@@ -32,8 +32,8 @@ app.use(webpackHot(compiler));
 var mongoose = require("mongoose");
 mongoose.connect(process.env.MONGODN_URI || "mongodb://localhost/manga");
 
-
-
+//Connect to model
+var manga = require("./models/manga");
 
 
 app.get("*", (req,res) => {
