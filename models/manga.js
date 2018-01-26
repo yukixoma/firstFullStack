@@ -11,7 +11,8 @@ var mangaSchema = new Schema ({
     genre:          Array,
     description:    String,
     status:         String,
-    username:       String
+    username:       String,
+    chapter:        Array
 },{timestamps: true});
 
 var ModelClass = mongoose.model("manga",mangaSchema);
