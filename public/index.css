@@ -3,11 +3,26 @@ body {
 }
 
 .main-item {
-    width: 100%;
+    margin-bottom: 10px;
+    width: 100% !important;
+    height: 350px !important;
+}
+.truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 8;
+    -webkit-box-orient: vertical;
 }
 
 .home-page-cover {
-    max-width: 100% !important;
-    height: auto !important;
+    max-height: 100%;
+    width: auto;
+    display:block;
+    margin:auto;
 }
 
+.card {
+    margin-top: 10px;
+    padding: 10px !important;
+}

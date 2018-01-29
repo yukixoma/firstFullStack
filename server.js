@@ -6,16 +6,20 @@ var fs = require("fs");
 var app = express();
 app.use(express.static(path.join(__dirname, "public")));
 
-//Multer handle file upload
+//multer handle file upload
 var multer = require("multer");
-var upload = multer({ dest: 'uploads/' })
+var upload = multer({ dest: 'uploads/' });
+
+//Connect to Imgur
+var imgur = require("imgur");
+imgur.setClientId("360ec78c61b2d44");
 
 //body parser parse form data
 var bodyParser = require("body-parser");
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-//webpack cofig, build react,js,css => bundle.js
+//webpack cofig, build react,js,css... to bundle.js
 var webpack = require("webpack");
 var config = require("./webpack.config");
 var compiler = webpack(config);
@@ -27,16 +31,11 @@ app.use(webPackDev(compiler, {
 }))
 app.use(webpackHot(compiler));
 
-
 //Connect to mongodb
 var mongoose = require("mongoose");
+var userModel = require("./models/user");
 var manga = require("./models/manga");
 mongoose.connect(process.env.MONGODN_URI || "mongodb://localhost/manga");
-
-//Connect to Imgur
-var imgur = require("imgur");
-imgur.setClientId("360ec78c61b2d44");
-
 
 //Config express route to let React router handle routing
 var route = ["/", "/upload"];
@@ -50,13 +49,12 @@ app.get("/fetchMangaList", (req, res) => {
         if (err) throw err;
         if (data) {
             res.send(data);
-            console.log(data);
         }
     })
 })
 
 
-
+//Handle new manga request
 app.post("/new", upload.single("file"), (req, res) => {
     imgur.uploadFile(req.file.path)
         .then(json => {
@@ -81,6 +79,7 @@ app.post("/new", upload.single("file"), (req, res) => {
                 status: status,
                 username: username
             });
+
             newManga.save(err => {
                 if (err) throw err;
                 console.log(newManga);

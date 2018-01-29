@@ -34,8 +34,10 @@ class MainCenter extends Component {
                                 <img className="home-page-cover" src={mangas[i].cover} />
                             </div>
                             <div className="col-lg-8">
-                                <h4 className="card-title">{mangas[i].name}</h4>
-                                <p className="card-text">{mangas[i].description}</p>
+                                <h4 className="card-title">{mangas[i].name}</h4>                                
+                                <div className="truncate text-justify">
+                                    <p className="card-text">{mangas[i].description}</p>
+                                </div>
                             </div>
                         </div>
                         <div className="card-footer">
@@ -46,7 +48,7 @@ class MainCenter extends Component {
                                 </div>
                                 <div>
                                     <i className="fa fa-tags" aria-hidden="true"> {mangas[i].genre} </i>
-                                </div> 
+                                </div>
                             </small>
                         </div>
                     </div>
@@ -55,7 +57,7 @@ class MainCenter extends Component {
         }
         return (
             <div>
-                <div className="card-deck">
+                <div className="card">
                     {result}
                 </div>
                 <div className="text-center">
