@@ -19,7 +19,7 @@ var bodyParser = require("body-parser");
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-//webpack cofig, build react,js,css... to bundle.js
+//webpack config: Build react,js,css file...in to 1 file bundle.js
 var webpack = require("webpack");
 var config = require("./webpack.config");
 var compiler = webpack(config);
@@ -108,6 +108,9 @@ app.post("/new", upload.single("file"), (req, res) => {
                 if (err) throw err;
                 console.log(newManga);
                 res.send("New manga added");
+            })
+            fs.unlink(req.file.path,err=>{
+                if(err) throw err;
             })
         })
         .catch(err => console.log(err.massage));
