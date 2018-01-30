@@ -3,7 +3,7 @@ let initialState = [];
 
 
 
-const Manga = (state = initialState, action) => {
+const Home = (state = initialState, action) => {
     switch(action.type) {
         case Types.FETCH_ALL_MANGA:
             state = action.mangas;
@@ -12,4 +12,4 @@ const Manga = (state = initialState, action) => {
     }
 }
 
-export default Manga;
+export default Home;

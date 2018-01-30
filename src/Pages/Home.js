@@ -3,20 +3,45 @@ import TopPanel from './../components/TopPanel';
 import MainLeft from './../components/MainLeft';
 import MainCenter from './../components/MainCenter';
 import MainRight from './../components/MainRight';
+import { actFetchAllMangaFromServer } from './../actions/index';
+import { connect } from 'react-redux';
 
 class HomePage extends Component {
+    componentDidMount() {
+        this.props.fetchAllManga();
+    }
     render() {
+        let { mangas } = this.props;
+        let timeSortedList = mangas.sort((a,b)=>{
+            return (a.updatedAt > b.updatedAt) ? -1 : ((a.updatedAt < b.updatedAt) ? 1 : 0);
+        });
+
         return (
-            <Fragment>
-                <TopPanel />
-                <div className="row">
-                    <div className="col-3"><MainLeft /></div>
-                    <div className="col-6"><MainCenter /></div>
-                    <div className="col-3"><MainRight /></div>
+            <div className="row">
+                <div className="col-lg-3"><MainLeft /></div>
+                <div className="col-lg-6">
+                    <TopPanel mangas={timeSortedList} />
+                    <MainCenter mangas={timeSortedList} />
                 </div>
-            </Fragment>
+                <div className="col-lg-3"><MainRight /></div>
+            </div>
         )
     }
 }
 
-export default HomePage;
+const mapStateToProps = state => {
+    return {
+        mangas: state.Home
+    }
+}
+
+const mapDispatchToProps = (dispatch, props) => {
+    return {
+        fetchAllManga: () => {
+            dispatch(actFetchAllMangaFromServer())
+        }
+    }
+}
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(HomePage);

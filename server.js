@@ -38,7 +38,7 @@ var manga = require("./models/manga");
 mongoose.connect(process.env.MONGODN_URI || "mongodb://localhost/manga");
 
 //Config express route to let React router handle routing
-var route = ["/", "/upload"];
+var route = ["/", "/new"];
 app.get(route, (req, res) => {
     res.sendFile(path.resolve(__dirname, "index.html"));
 });
@@ -46,10 +46,18 @@ app.get(route, (req, res) => {
 //Config express route to let Client fetch data
 app.get("/fetchMangaList", (req, res) => {
     manga.find({}, (err, data) => {
-        if (err) throw err;
+        if (err) res.writeHead(500,"Database error");
         if (data) {
             res.send(data);
         }
+    })
+})
+
+app.get("/fetchMangaInfo/:id",(req,res)=> {
+    var id = req.params.id;
+    manga.findOne({_id: id},(err,data)=> {
+        if(err) res.writeHead(500,"Database error");
+        if(data) res.send(data);
     })
 })
 
@@ -65,7 +73,7 @@ app.post("/new", upload.single("file"), (req, res) => {
             var group = req.body.group;
             var genre = req.body.genre.split(", ");
             var description = req.body.description;
-            var status = req.body.name;
+            var status = req.body.status;
             var username = "yukixoma";
 
             var newManga = new manga({

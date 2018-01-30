@@ -2,26 +2,23 @@ import React, { Component } from 'react';
 
 class TopPanel extends Component {
     render() {
+        let { mangas } = this.props;
+        let cover = ["", "", ""];
+        if (mangas.length > 0) {
+            for (let i = 0; i < 2; i++) {
+                cover[i] = mangas[i].cover;
+            }
+        }
         return (
-            <div className="card">
+            <div className="card top-panel">
                 <h3 className="card-header">Top Panel</h3>
                 <div className="card-block">
                     <div className="row">
-                        <div>
-                            <div className="card">
-                                <img className="card-img-top" src="" alt="Card image cap" />
-                                <div className="card-block">
-                                    <h3 className="card-title">Special title treatment</h3>
-                                </div>
-                            </div>
+                        <div className="card">
+                            <img className="card-img-top top-panel-item" src={cover[0]} />
                         </div>
-                        <div>
-                            <div className="card">
-                                <img className="card-img-top" src="" alt="Card image cap" />
-                                <div className="card-block">
-                                    <h3 className="card-title">Special title treatment</h3>
-                                </div>
-                            </div>
+                        <div className="card">
+                            <img className="card-img-top top-panel-item" src={cover[1]} />
                         </div>
                     </div>
                 </div>

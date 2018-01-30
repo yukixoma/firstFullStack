@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import { actFetchAllMangaFromServer } from './../actions/index';
-import { connect } from 'react-redux';
+import {Link} from 'react-router-dom';
 
 class MainCenter extends Component {
     constructor(props) {
@@ -10,11 +9,6 @@ class MainCenter extends Component {
             page: 1
         }
     }
-
-    componentDidMount() {
-        this.props.fetchAllMagas();
-    }
-
     onPagination = (e) => {
         e.preventDefault();
         let { value } = e.target;
@@ -34,7 +28,11 @@ class MainCenter extends Component {
                                 <img className="home-page-cover" src={mangas[i].cover} />
                             </div>
                             <div className="col-lg-8">
-                                <h4 className="card-title">{mangas[i].name}</h4>                                
+                                <h4 className="card-title">
+                                    <Link to={"detail/" + mangas[i]._id}>
+                                        {mangas[i].name}
+                                    </Link>
+                                </h4>                                
                                 <div className="truncate text-justify">
                                     <p className="card-text">{mangas[i].description}</p>
                                 </div>
@@ -57,9 +55,7 @@ class MainCenter extends Component {
         }
         return (
             <div>
-                <div className="card">
-                    {result}
-                </div>
+                {result}
                 <div className="text-center">
                     <button type="button" className="btn btn-danger mr-sm-2" value="-"
                         onClick={this.onPagination}
@@ -77,18 +73,5 @@ class MainCenter extends Component {
     }
 }
 
-const mapStateToProps = state => {
-    return {
-        mangas: state.Manga
-    }
-}
 
-const mapDispatchToProps = (dispatch, props) => {
-    return {
-        fetchAllMagas: () => {
-            dispatch(actFetchAllMangaFromServer())
-        }
-    }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(MainCenter);
+export default MainCenter;
