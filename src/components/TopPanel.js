@@ -5,7 +5,7 @@ class TopPanel extends Component {
         let { mangas } = this.props;
         let cover = ["", "", ""];
         if (mangas.length > 0) {
-            for (let i = 0; i < 2; i++) {
+            for (let i = 0; i < mangas.length; i++) {
                 cover[i] = mangas[i].cover;
             }
         }

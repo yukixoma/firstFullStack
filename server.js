@@ -38,26 +38,42 @@ var manga = require("./models/manga");
 mongoose.connect(process.env.MONGODN_URI || "mongodb://localhost/manga");
 
 //Config express route to let React router handle routing
-var route = ["/", "/new"];
+var route = ["/", "/new", "/register",];
 app.get(route, (req, res) => {
-    res.sendFile(path.resolve(__dirname, "index.html"));
+    res.sendFile(path.resolve("./", "index.html"));
 });
+
 
 //Config express route to let Client fetch data
 app.get("/fetchMangaList", (req, res) => {
     manga.find({}, (err, data) => {
-        if (err) res.writeHead(500,"Database error");
+        if (err) res.writeHead(500, "Database error");
         if (data) {
             res.send(data);
         }
     })
 })
 
-app.get("/fetchMangaInfo/:id",(req,res)=> {
+app.get("/fetchMangaInfo/:id", (req, res) => {
     var id = req.params.id;
-    manga.findOne({_id: id},(err,data)=> {
-        if(err) res.writeHead(500,"Database error");
-        if(data) res.send(data);
+    manga.findOne({ _id: id }, (err, data) => {
+        if (err) res.writeHead(500, "Database error");
+        if (data) res.send(data);
+    })
+})
+
+app.post("/fetchUserUploadedManga", (req, res) => {
+    var username = req.body.username;
+    var password = req.body.password;
+    userModel.login(username, password, (data, err) => {
+        if(data === "Login success") {
+            manga.find({username: username},(err,result) => {
+                if(err) throw err;
+                res.send(result);
+            })
+        } else {
+            res.send("Authentication error");
+        }
     })
 })
 
@@ -91,13 +107,52 @@ app.post("/new", upload.single("file"), (req, res) => {
             newManga.save(err => {
                 if (err) throw err;
                 console.log(newManga);
+                res.send("New manga added");
             })
         })
         .catch(err => console.log(err.massage));
 });
 
+//Handle Manga delete request 
+app.post("/remove/manga/:id",(req,res)=> {
+    var id = req.params.id;
+    var username = req.body.username;
+    var password = req.body.password;
+    userModel.login(username,password,(data,err) => {
+        if(err) throw err;
+        if(data) {
+            manga.findOneAndRemove({_id:id},(err,result)=> {
+                if(err) throw err;
+                manga.find({},(err,data)=> {
+                    if(err) throw err;
+                    res.send(data);
+                })
+            })
+        }
+    })
+})
 
 
+//Handle Sign-up request 
+app.post("/register", (req, res) => {
+    var email = req.body.email;
+    var username = req.body.username;
+    var password = req.body.password;
+    userModel.register(username, password, (data, err) => {
+        if (data) res.send(data);
+        else res.send(err);
+    })
+})
+
+//Handle Log-in request
+app.post("/login", (req, res) => {
+    var username = req.body.username;
+    var password = req.body.password;
+    userModel.login(username, password, (data, err) => {
+        if (err) res.send(err);
+        if (data) res.send(data);
+    })
+})
 
 
 

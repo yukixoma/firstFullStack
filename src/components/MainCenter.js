@@ -29,7 +29,7 @@ class MainCenter extends Component {
                             </div>
                             <div className="col-lg-8">
                                 <h4 className="card-title">
-                                    <Link to={"detail/" + mangas[i]._id}>
+                                    <Link to={"/detail/" + mangas[i]._id}>
                                         {mangas[i].name}
                                     </Link>
                                 </h4>                                
