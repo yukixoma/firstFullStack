@@ -40,7 +40,7 @@ class EditManga extends Component {
         }
         let mangaID = e.target.value;
         let endPoint = "/remove/manga/" + mangaID;
-        apiCaller("POST", endPoint, user , (data, err) => {
+        apiCaller("POST", endPoint, user, (data, err) => {
             if (err) throw err;
             this.setState({
                 msg: "Manga deleted",
@@ -60,7 +60,11 @@ class EditManga extends Component {
                     <th>{mangas[i]._id}</th>
                     <td><Link to={"/detail/" + mangas[i]._id} exact="true"> {mangas[i].name} </Link></td>
                     <td>
-                        <button type="button" class="btn mr-sm-2 btn-info">New Chapter</button>
+                        <Link to={"/add/chapter/" + mangas[i]._id} exact="true">
+                            <button type="button" class="btn mr-sm-2 btn-info">
+                                New Chapter
+                            </button>
+                        </Link>
                         <button type="button" class="btn mr-sm-2 btn-warning">Edit</button>
                         <button type="button" class="btn mr-sm-2 btn-danger" value={mangas[i]._id} onClick={this.onDelete}>
                             Delete

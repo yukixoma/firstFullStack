@@ -72,3 +72,6 @@ li {
     width: auto;
 }
 
+.add-chapter-button {
+    width: 150px !important;
+}

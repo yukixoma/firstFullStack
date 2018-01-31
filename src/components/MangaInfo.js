@@ -9,7 +9,7 @@ class MangaInfo extends Component {
                 <div className="card manga-info-item">
                     <h3 className="card-header text-center">Description</h3>
                     <div className="card-block">
-                        <p className="card-text">
+                        <p className="card-text text-justify">
                             {manga.description}
                         </p>
                     </div>

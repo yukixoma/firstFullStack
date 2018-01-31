@@ -8,6 +8,7 @@ import New  from './components/New';
 import Detail from './Pages/Detail';
 import EditManga from './Pages/EditManga';
 import Register from './Pages/Register';
+import AddChapter from './Pages/AddChapter';
 
 
 class App extends Component {
@@ -22,7 +23,8 @@ class App extends Component {
                         <Route path="/new" exact component={New} />
                         <Route path="/detail/:id" component={Detail} />
                         <Route path="/edit/manga" component={EditManga} />
-                        <Route path="/register" component={Register} />
+                        <Route path="/add/chapter/:id" component={AddChapter} />
+                        <Route path="/register" component={Register} />                
                     </Switch>      
                 </Fragment>
             </BrowserRouter>
