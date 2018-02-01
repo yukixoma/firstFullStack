@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import apiCaller from './../apiCaller';
 
 class Uploader extends Component {
     constructor(props) {
@@ -27,6 +28,8 @@ class Uploader extends Component {
 
     render() {
         let result = [];
+        let { id } = this.props;
+        let endPoint = "/chap/new/" + id;
         for (let i = 0; i < this.state.uploadNumber; i++) {
             result.push(
                 <div className="form-group" key={i}>
@@ -40,8 +43,8 @@ class Uploader extends Component {
         return (
             <div className="card ">
                 <h3 class="card-header">Uploader</h3>
-                <div className="card-block">
-                    <form className="row">
+                <div className="card-block" >
+                    <form action={endPoint} method="post" enctype="multipart/form-data" className="row">
                         <div className="col-lg-8">
                             {result}
                         </div>
@@ -52,7 +55,9 @@ class Uploader extends Component {
                             <button type="button" value="-" className="btn btn-danger add-chapter-button my-sm-2" onClick={this.onClickHandle}>
                                 - upload field
                                 </button>
-                            <button type="submit" className="btn btn-primary add-chapter-button my-sm-2">Upload</button>
+                            <button type="submit" className="btn btn-primary add-chapter-button my-sm-2">
+                                Upload
+                            </button>
                         </div>
                     </form>
                 </div>

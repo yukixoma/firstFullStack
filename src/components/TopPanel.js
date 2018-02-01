@@ -20,6 +20,9 @@ class TopPanel extends Component {
                         <div className="card">
                             <img className="card-img-top top-panel-item" src={cover[1]} />
                         </div>
+                        <div className="card">
+                            <img className="card-img-top top-panel-item" src={cover[2]} />
+                        </div>
                     </div>
                 </div>
             </div>

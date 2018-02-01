@@ -12,11 +12,15 @@ class Detail extends Component {
     }
     render() {
         let manga = this.props.manga;
+        let id = this.props.match.params.id;
         return (
             <div className="row">
                 <div className="col-lg-3"><MainLeft /></div>
                 <div className="col-lg-6">
-                    <MangaInfo manga={manga} />
+                    <MangaInfo
+                        manga={manga}
+                        id={id}
+                    />
                 </div>
                 <div className="col-lg-3"><MainRight /></div>
             </div>

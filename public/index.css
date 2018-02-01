@@ -62,7 +62,7 @@ body {
     border-radius: 10px;
 }
 
-li {
+.nav-item {
     width: 120px !important;
     text-align: center;
 }
@@ -74,4 +74,9 @@ li {
 
 .add-chapter-button {
     width: 150px !important;
+}
+.img-center {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 }

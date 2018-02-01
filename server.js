@@ -66,9 +66,9 @@ app.post("/fetchUserUploadedManga", (req, res) => {
     var username = req.body.username;
     var password = req.body.password;
     userModel.login(username, password, (data, err) => {
-        if(data === "Login success") {
-            manga.find({username: username},(err,result) => {
-                if(err) throw err;
+        if (data === "Login success") {
+            manga.find({ username: username }, (err, result) => {
+                if (err) throw err;
                 res.send(result);
             })
         } else {
@@ -80,54 +80,104 @@ app.post("/fetchUserUploadedManga", (req, res) => {
 
 //Handle new manga request
 app.post("/new", upload.single("file"), (req, res) => {
-    imgur.uploadFile(req.file.path)
-        .then(json => {
-            var name = req.body.name;
-            var subName = req.body.subName;
-            var cover = json.data.link;
-            var author = req.body.author;
-            var group = req.body.group;
-            var genre = req.body.genre.split(", ");
-            var description = req.body.description;
-            var status = req.body.status;
-            var username = "yukixoma";
+    var username = req.body.username;
+    var password = req.body.password;
+    userModel.login(username, password, (data, err) => {
+        if (err) res.send(err);
+        if (data) {
+            imgur.uploadFile(req.file.path)
+                .then(json => {
+                    var name = req.body.name;
+                    var subName = req.body.subName;
+                    var cover = json.data.link;
+                    var author = req.body.author;
+                    var group = req.body.group;
+                    var genre = req.body.genre.split(", ");
+                    var description = req.body.description;
+                    var status = req.body.status;
+                    var username = "yukixoma";
 
-            var newManga = new manga({
-                name: name,
-                subName: subName,
-                cover: cover,
-                author: author,
-                group: group,
-                genre: genre,
-                description: description,
-                status: status,
-                username: username
-            });
+                    var newManga = new manga({
+                        name: name,
+                        subName: subName,
+                        cover: cover,
+                        author: author,
+                        group: group,
+                        genre: genre,
+                        description: description,
+                        status: status,
+                        username: username
+                    });
 
-            newManga.save(err => {
-                if (err) throw err;
-                console.log(newManga);
-                res.send("New manga added");
-            })
-            fs.unlink(req.file.path,err=>{
-                if(err) throw err;
-            })
-        })
-        .catch(err => console.log(err.massage));
+                    newManga.save(err => {
+                        if (err) throw err;
+                        res.send("New manga added");
+                    })
+                    fs.unlink(req.file.path, err => {
+                        if (err) throw err;
+                    })
+                })
+                .catch(err => console.log(err.massage));
+        }
+    })
+
 });
 
+//Handle new chapter request
+app.post("/chap/new/:id", upload.array("files"), (req, res) => {
+    var files = [];
+    req.files.map((file, index) => {
+        files.push(file.path);
+    })
+    var id = req.params.id;
+    manga.findOne({ _id: id }, (err, data) => {
+        if (err) res.writeHead(500, err);
+        if (data) {
+            var newChapter = data.chapter;
+            newChapter.push([[], [], []]);
+            var i = 0;
+            function uploadMulti() {
+                if (i < files.length) {
+                    imgur.uploadFile(files[i])
+                        .then(json => {
+                            var length = newChapter.length;
+                            newChapter[length - 1][0].push(json.data.link);
+                            i += 1;
+                            fs.unlink(files[i]);
+                            uploadMulti();
+                        })
+                        .catch(err => console.log(err.massage));
+                }
+                if (i === files.length) {
+                    manga.findOneAndUpdate({ _id: id }, { $set: { chapter: newChapter } }, { new: true }, (err, doc, data) => {
+                        if (err) resolve.writeHead(500, err);
+                        res.send("New chapter uploaded");
+                    })
+                }
+            }
+            uploadMulti();
+        }
+    })
+})
+
+app.get("/clear", (req, res) => {
+    manga.findOneAndUpdate({ _id: "5a7197e04ea587044090a140" }, { $set: { chapter: [] } }, (err, res) => {
+        console.log("clear");
+    })
+})
+
 //Handle Manga delete request 
-app.post("/remove/manga/:id",(req,res)=> {
+app.post("/remove/manga/:id", (req, res) => {
     var id = req.params.id;
     var username = req.body.username;
     var password = req.body.password;
-    userModel.login(username,password,(data,err) => {
-        if(err) throw err;
-        if(data) {
-            manga.findOneAndRemove({_id:id},(err,result)=> {
-                if(err) throw err;
-                manga.find({},(err,data)=> {
-                    if(err) throw err;
+    userModel.login(username, password, (data, err) => {
+        if (err) throw err;
+        if (data) {
+            manga.findOneAndRemove({ _id: id }, (err, result) => {
+                if (err) throw err;
+                manga.find({}, (err, data) => {
+                    if (err) throw err;
                     res.send(data);
                 })
             })

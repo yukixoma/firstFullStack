@@ -23,9 +23,10 @@ class AddChapter extends Component {
             <div className="container">
                 <div className="row">
                     <div className="col-lg-6">
-                        <Uploader 
-                            onReceivepreViewUrl={this.previewUrlReceiver} 
-                            previewUrl = {previewUrl}
+                        <Uploader
+                            onReceivepreViewUrl={this.previewUrlReceiver}
+                            previewUrl={previewUrl}
+                            id={id}
                         />
                     </div>
                     <div className="col-lg-6">
