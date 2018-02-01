@@ -8,7 +8,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 //multer handle file upload
 var multer = require("multer");
-var upload = multer({ dest: 'uploads/' });
+var upload = multer({ dest: 'tmp/' });
 
 //Connect to Imgur
 var imgur = require("imgur");
@@ -150,7 +150,7 @@ app.post("/chap/new/:id", upload.array("files"), (req, res) => {
                 }
                 if (i === files.length) {
                     manga.findOneAndUpdate({ _id: id }, { $set: { chapter: newChapter } }, { new: true }, (err, doc, data) => {
-                        if (err) resolve.writeHead(500, err);
+                        if (err) res.writeHead(500, err);
                         res.send("New chapter uploaded");
                     })
                 }
