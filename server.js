@@ -35,7 +35,7 @@ app.use(webpackHot(compiler));
 var mongoose = require("mongoose");
 var userModel = require("./models/user");
 var manga = require("./models/manga");
-mongoose.connect(process.env.MONGODN_URI || "mongodb://localhost/manga");
+mongoose.connect("mongodb://yukixoma:123456789@ds046357.mlab.com:46357/manga");
 
 //Config express route to let React router handle routing
 var route = ["/", "/new", "/register",];
