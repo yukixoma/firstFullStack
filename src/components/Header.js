@@ -16,7 +16,7 @@ class Header extends Component {
         let name = e.target.name;
         let value = e.target.value;
         this.setState({
-            [name] : value
+            [name]: value
         })
     }
 
@@ -28,6 +28,7 @@ class Header extends Component {
             if (data.data === "Login success") {
                 localStorage.setItem("username", this.state.username);
                 localStorage.setItem("password", this.state.password);
+                this.props.LogInOut("in");
                 this.setState({
                     username: "",
                     password: ""
@@ -37,14 +38,34 @@ class Header extends Component {
 
     }
 
+    onLogout = (e) => {
+        e.preventDefault();
+        localStorage.removeItem("username");
+        localStorage.removeItem("password");
+        localStorage.removeItem("manga");
+        this.setState({
+            username: "",
+            password: ""
+        })
+        this.props.LogInOut("out");
+    }
+
     render() {
+        let username = localStorage.getItem("username");
+        let password = localStorage.getItem("password");
+        let loginField = { display: "" };
+        let logoutField = { display: "none" }
+        if (username && password) {
+            loginField.display = "none";
+            logoutField.display = "";
+        }
         return (
             <div style={{ paddingTop: 20, paddingBottom: 20, paddingRight: 10, color: "white" }}>
                 <div className="row" >
                     <div className="col-lg-6">
                         <h1>Manga Reader Web</h1>
                     </div>
-                    <div className="col-lg-6 text-right">
+                    <div className="col-lg-6 text-right" style={loginField}>
                         <div className="float-right">
                             <form className="form-inline" onSubmit={this.onSubmit}>
                                 <input type="username" name="username" className="form-control mb-2 mr-sm-2 mb-sm-0" placeholder="Username"
@@ -59,6 +80,13 @@ class Header extends Component {
                                 <Link exact="true" to="/register"> Sign-up </Link>
                             </div>
                         </div>
+                    </div>
+                    <div className="col-lg-6 text-right" style={logoutField}>
+                        <p className="badge badge-success"> Welcome {username} </p>
+                        <br />
+                        <button type="button" className="btn btn-danger" onClick={this.onLogout}>
+                            Logout
+                        </button>
                     </div>
                 </div>
             </div>

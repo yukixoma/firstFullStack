@@ -4,6 +4,12 @@ import { NavLink } from 'react-router-dom';
 
 class Navbar extends Component {
     render() {
+        let username = localStorage.getItem("username");
+        let password = localStorage.getItem("password");
+        let manager = {display: "none"};
+        if(username && password) {
+            manager.display = "";
+        }
         return (
             <nav className="navbar navbar-toggleable-md navbar-inverse bg-inverse">
                 <div className="container">
@@ -25,7 +31,7 @@ class Navbar extends Component {
                             <li className="nav-item">
                                 <a className="nav-link" href="#">Genre</a>
                             </li>
-                            <li className="nav-item dropdown">
+                            <li className="nav-item dropdown" style={manager}>
                                 <a className="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     Manager
                                 </a>

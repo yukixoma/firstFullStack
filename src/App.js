@@ -14,21 +14,34 @@ import NewManga from './Pages/NewManga';
 
 
 class App extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            state: "out"
+        }
+    }
+
+    onLogInOut = (option) => {
+        this.setState({
+            state: option
+        })
+    }
+
     render() {
         return (
             <BrowserRouter history={browserHistory}>
                 <Fragment>
-                    <Header />
-                    <Navbar /> 
+                    <Header LogInOut={this.onLogInOut} />
+                    <Navbar />
                     <Switch>
                         <Route path="/" exact component={Home} />
                         <Route path="/new" exact component={NewManga} />
                         <Route path="/detail/:id" component={Detail} />
                         <Route path="/edit/manga" component={EditManga} />
                         <Route path="/add/chapter/:id" component={AddChapter} />
-                        <Route path="/register" component={Register} /> 
-                        <Route path="/read/:id/:chapter" component={Reader} />              
-                    </Switch>      
+                        <Route path="/register" component={Register} />
+                        <Route path="/read/:id/:chapter" component={Reader} />
+                    </Switch>
                 </Fragment>
             </BrowserRouter>
         )

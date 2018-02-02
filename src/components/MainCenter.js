@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 class MainCenter extends Component {
     constructor(props) {
@@ -21,6 +21,13 @@ class MainCenter extends Component {
         let result = [];
         if (mangas) {
             for (let i = 0; i < mangas.length; i++) {
+                let genres = mangas[i].genre.map((genre,index) => {
+                    return(
+                        <Link className="badge badge-pill badge-info" key={index} to={"/list/genre/" + genre} exact="true" >
+                            {genre}
+                        </Link>
+                    )
+                })
                 result.push(
                     <div className="card main-item" key={i}>
                         <div className="card-block row">
@@ -32,7 +39,7 @@ class MainCenter extends Component {
                                     <Link to={"/detail/" + mangas[i]._id}>
                                         {mangas[i].name}
                                     </Link>
-                                </h4>                                
+                                </h4>
                                 <div className="truncate text-justify">
                                     <p className="card-text">{mangas[i].description}</p>
                                 </div>
@@ -45,7 +52,7 @@ class MainCenter extends Component {
                                     <i className="fa fa-clock-o col-lg-4" aria-hidden="true"> {mangas[i].updatedAt} </i>
                                 </div>
                                 <div>
-                                    <i className="fa fa-tags" aria-hidden="true"> {mangas[i].genre} </i>
+                                    <i className="fa fa-tags" aria-hidden="true"> {genres} </i>
                                 </div>
                             </small>
                         </div>
