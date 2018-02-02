@@ -133,7 +133,8 @@ app.post("/chap/new/:id", upload.array("files"), (req, res) => {
     manga.findOne({ _id: id }, (err, data) => {
         if (err) res.writeHead(500, err);
         if (data) {
-            res.send("Server is uploading to host");
+            res.send("Server is continue uploading to host");
+            res.redirect("/");
             var newChapter = data.chapter;
             newChapter.push([[], [], []]);
             var i = 0;
@@ -155,7 +156,6 @@ app.post("/chap/new/:id", upload.array("files"), (req, res) => {
                 if (i === files.length) {
                     manga.findOneAndUpdate({ _id: id }, { $set: { chapter: newChapter } }, { new: true }, (err, doc, data) => {
                         if (err) res.writeHead(500, err);
-                        res.send("New chapter uploaded");
                     })
                 }
             }
