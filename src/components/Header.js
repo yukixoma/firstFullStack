@@ -43,6 +43,7 @@ class Header extends Component {
         localStorage.removeItem("username");
         localStorage.removeItem("password");
         localStorage.removeItem("manga");
+        localStorage.removeItem("mangaName");
         this.setState({
             username: "",
             password: ""
