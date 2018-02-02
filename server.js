@@ -215,5 +215,5 @@ app.post("/login", (req, res) => {
 
 
 
-
+app.timeout(600000);
 app.listen(process.env.PORT || 3000);
