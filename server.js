@@ -133,6 +133,7 @@ app.post("/chap/new/:id", upload.array("files"), (req, res) => {
     manga.findOne({ _id: id }, (err, data) => {
         if (err) res.writeHead(500, err);
         if (data) {
+            res.send("Server is uploading to host");
             var newChapter = data.chapter;
             newChapter.push([[], [], []]);
             var i = 0;
@@ -215,5 +216,5 @@ app.post("/login", (req, res) => {
 
 
 
-app.timeout(600000);
+
 app.listen(process.env.PORT || 3000);
