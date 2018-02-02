@@ -133,6 +133,7 @@ app.post("/chap/new/:id", upload.array("files"), (req, res) => {
     manga.findOne({ _id: id }, (err, data) => {
         if (err) res.writeHead(500, err);
         if (data) {
+            res.send("server is uploading your image to host")
             var newChapter = data.chapter;
             newChapter.push([[], [], []]);
             var i = 0;
