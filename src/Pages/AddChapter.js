@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Uploader from '../components/Uploader';
 import Preview from '../components/Preview';
+import { Redirect } from 'react-router';
 
 class AddChapter extends Component {
     constructor(props) {
@@ -8,7 +9,8 @@ class AddChapter extends Component {
         this.state = {
             previewUrl: [],
             alert: "alert alert-warning",
-            msg: "Upload image one by one to guarantee their order"
+            msg: "Upload image one by one to guarantee their order",
+            uploadIsDone: false
         }
     }
 
@@ -22,9 +24,14 @@ class AddChapter extends Component {
         if (msg === "Server recieved files") {
             this.setState({
                 alert: "alert alert-success",
-                msg: "Server recieved files and continue uploading to image Host. \n" +
-                    "Your new chapter will be added after server upload is done."
-            })
+                msg: "Server recieved files and continue uploading to image Host." +
+                    "Your new chapter will be added after server upload is done." +
+                    "Auto redirect in 1 minute."
+            },setTimeout(
+                this.setState({
+                    uploadIsDone: true,
+                })
+            ),60000)
         } 
         else {
             this.setState({
@@ -36,8 +43,8 @@ class AddChapter extends Component {
 
     render() {
         let { id } = this.props.match.params;
-        let { previewUrl, alert, msg } = this.state;
-
+        let { previewUrl, alert, msg, uploadIsDone } = this.state;
+        if(uploadIsDone) {return <Redirect to="/edit/manga" />;}
         return (
             <div className="container">
                 <div className={alert} role="alert" style={{marginTop: 10}}>
