@@ -133,8 +133,7 @@ app.post("/chap/new/:id", upload.array("files"), (req, res) => {
     manga.findOne({ _id: id }, (err, data) => {
         if (err) res.writeHead(500, err);
         if (data) {
-            res.send("Server is continue uploading to host");
-            res.redirect("/");
+            res.send("Server recieved files");
             var newChapter = data.chapter;
             newChapter.push([[], [], []]);
             var i = 0;
@@ -155,7 +154,7 @@ app.post("/chap/new/:id", upload.array("files"), (req, res) => {
                 }
                 if (i === files.length) {
                     manga.findOneAndUpdate({ _id: id }, { $set: { chapter: newChapter } }, { new: true }, (err, doc, data) => {
-                        if (err) res.writeHead(500, err);
+                        if (err) console.log(err);
                     })
                 }
             }
@@ -214,7 +213,14 @@ app.post("/login", (req, res) => {
 
 
 
-
+app.post("/test", upload.array("files"),(req,res) => {
+    res.send("Server recieved files");
+    req.files.map((file, index) => {
+        fs.unlink(file.path,err=> {
+            if(err) res.send(err);
+        })
+    })
+})
 
 
 app.listen(process.env.PORT || 3000);

@@ -21,16 +21,51 @@ class Uploader extends Component {
 
     onChangeHandle = (e) => {
         let { previewUrl } = this.props;
+        let { imgArray } = this.state;
         let imgPosition = e.target.id;
         previewUrl[imgPosition] = (URL.createObjectURL(e.target.files[0]));
         this.props.onReceivepreViewUrl(previewUrl);
     }
 
-    render() {
-        let result = [];
+    onUpload = (e) => {
+        e.preventDefault();
+        let formElement = document.getElementById("form");
+        let formData = new FormData(formElement);
         let { id } = this.props;
         let endPoint = "/chap/new/" + id;
-        for (let i = 0; i < this.state.uploadNumber; i++) {
+        apiCaller("POST", endPoint, formData, (data, err) => {
+            if (err) this.props.onReceiveUploadMsg(err);
+            if (data) this.props.onReceiveUploadMsg(data.data);
+        })
+    }
+
+    onSetUploadNumber = e => {
+        let uploadNumber = e.target.value;
+        if (uploadNumber !== "") {
+            uploadNumber = parseInt(uploadNumber, 10);
+            this.setState({
+                uploadNumber
+            })
+        } else {
+            this.setState({
+                uploadNumber
+            })
+        }
+    }
+    onBlur = e => {
+        let uploadNumber = e.target.value;
+        console.log(uploadNumber);
+        if (uploadNumber === "") {
+            this.setState({
+                uploadNumber: 8
+            })
+        }
+    }
+
+    render() {
+        let result = [];
+        let { uploadNumber } = this.state;
+        for (let i = 0; i < uploadNumber; i++) {
             result.push(
                 <div className="form-group" key={i}>
                     <label> File {i + 1} </label>
@@ -44,11 +79,18 @@ class Uploader extends Component {
             <div className="card ">
                 <h3 class="card-header">Uploader</h3>
                 <div className="card-block" >
-                    <form action={endPoint} method="post" enctype="multipart/form-data" className="row">
+                    <form className="row" id="form" encType="multipart/formdata" onSubmit={this.onUpload}>
                         <div className="col-lg-8">
                             {result}
                         </div>
                         <div className="col-lg-4 text-right">
+                            <label> Manga pages </label>
+                            <input
+                                className="form-control add-chapter-button"
+                                value={uploadNumber}
+                                onChange={this.onSetUploadNumber}
+                                onBlur={this.onBlur}
+                            />
                             <button type="button" value="+" className="btn btn-success add-chapter-button my-sm-2" onClick={this.onClickHandle}>
                                 + upload field
                                 </button>

@@ -24,7 +24,6 @@ class Header extends Component {
         e.preventDefault();
         let newLogin = this.state;
         apiCaller("POST", "/login", newLogin, (data, err) => {
-            alert(data.data);
             if (data.data === "Login success") {
                 localStorage.setItem("username", this.state.username);
                 localStorage.setItem("password", this.state.password);
