@@ -133,7 +133,6 @@ app.post("/chap/new/:id", upload.array("files"), (req, res) => {
     manga.findOne({ _id: id }, (err, data) => {
         if (err) res.writeHead(500, err);
         if (data) {
-            res.send("server is uploading your image to host")
             var newChapter = data.chapter;
             newChapter.push([[], [], []]);
             var i = 0;
@@ -141,13 +140,16 @@ app.post("/chap/new/:id", upload.array("files"), (req, res) => {
                 if (i < files.length) {
                     imgur.uploadFile(files[i])
                         .then(json => {
-                            var length = newChapter.length;
-                            newChapter[length - 1][0].push(json.data.link);
-                            i += 1;
                             fs.unlink(files[i]);
+                            var length = newChapter.length;
+                            newChapter[length - 1][0].push(json.data.link);    
+                            i += 1;
                             uploadMulti();
                         })
-                        .catch(err => console.log(err.massage));
+                        .catch(err => {
+                            fs.unlink(files[i]);
+                            console.log(err);
+                        });
                 }
                 if (i === files.length) {
                     manga.findOneAndUpdate({ _id: id }, { $set: { chapter: newChapter } }, { new: true }, (err, doc, data) => {
