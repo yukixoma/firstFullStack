@@ -5,9 +5,10 @@ class MangaInfo extends Component {
     render() {
         let { manga, id } = this.props;
         let result = [];
+        let genres = [];
         if (manga.chapter) {
-            localStorage.setItem("manga",JSON.stringify(manga.chapter));
-            localStorage.setItem("mangaName",manga.name);
+            localStorage.setItem("manga", JSON.stringify(manga.chapter));
+            localStorage.setItem("mangaName", manga.name);
             for (let i = 0; i < manga.chapter.length; i++) {
                 result.push(
                     <li key={i} className="list-group-item">
@@ -17,10 +18,21 @@ class MangaInfo extends Component {
                     </li>
                 )
             }
+            genres = manga.genre.map((genre,index) => {
+                return(
+                    <Link className="badge badge-pill badge-info" key={index} to={"/list/genre/" + genre} exact="true" >
+                        {genre}
+                    </Link>
+                )
+            })
         }
+        
         return (
             <div className="card manga-info">
-                <img src={manga.cover} class="img-fluid rounded manga-info-item" alt="Responsive image" />
+                <div className="card manga-info-item">
+                    <h1 className="card-header text-center"> {manga.name} </h1>
+                    <img src={manga.cover} class="img-fluid rounded manga-info-item" alt="Responsive image" />
+                </div>
                 <div className="card manga-info-item">
                     <h3 className="card-header text-center">Description</h3>
                     <div className="card-block">
@@ -36,8 +48,9 @@ class MangaInfo extends Component {
                             <br />
                             <strong>Group:</strong> {manga.group}
                             <br />
-                            <strong>Genre:</strong> {manga.genre}
-                            <br />
+                            <div>
+                                <strong>Genre:</strong> {genres}
+                            </div>                
                             <strong>Upload by:</strong> {manga.username}
                             <br />
                             <strong>Status:</strong> {manga.status}

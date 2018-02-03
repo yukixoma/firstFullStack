@@ -21,7 +21,6 @@ class Uploader extends Component {
 
     onChangeHandle = (e) => {
         let { previewUrl } = this.props;
-        let { imgArray } = this.state;
         let imgPosition = e.target.id;
         previewUrl[imgPosition] = (URL.createObjectURL(e.target.files[0]));
         this.props.onReceivepreViewUrl(previewUrl);
@@ -29,6 +28,7 @@ class Uploader extends Component {
 
     onUpload = (e) => {
         e.preventDefault();
+        this.props.onReceiveUploadMsg("Uploading to server");
         let formElement = document.getElementById("form");
         let formData = new FormData(formElement);
         let { id } = this.props;
@@ -63,6 +63,8 @@ class Uploader extends Component {
     }
 
     render() {
+        let username = localStorage.getItem("username");
+        let password = localStorage.getItem("password");
         let result = [];
         let { uploadNumber } = this.state;
         for (let i = 0; i < uploadNumber; i++) {
@@ -76,10 +78,14 @@ class Uploader extends Component {
             )
         }
         return (
-            <div className="card ">
-                <h3 class="card-header">Uploader</h3>
+            <div className="card">
+                <h3 class="card-header" style={{ backgroundColor: "#428bca", color: "white" }}>Uploader</h3>
                 <div className="card-block" >
                     <form className="row" id="form" encType="multipart/formdata" onSubmit={this.onUpload}>
+                        <div style={{ display: "none" }}>
+                            <input name="username" value={username} />
+                            <input name="password" value={password} />
+                        </div>
                         <div className="col-lg-8">
                             {result}
                         </div>

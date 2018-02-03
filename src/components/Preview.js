@@ -11,7 +11,7 @@ class Preview extends Component {
         }
         return (
             <div className="card">
-                <h3 class="card-header">Preview</h3>
+                <h3 class="card-header" style={{backgroundColor: "#5cb85c",color:"white"}}>Preview</h3>
                 <div class="card-block">
                     {preview}
                 </div>

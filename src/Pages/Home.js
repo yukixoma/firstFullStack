@@ -31,7 +31,7 @@ class HomePage extends Component {
 
 const mapStateToProps = state => {
     return {
-        mangas: state.Home
+        mangas: state.Manga
     }
 }
 

@@ -41,7 +41,7 @@ var manga = require("./models/manga");
 mongoose.connect("mongodb://yukixoma:123456789@ds046357.mlab.com:46357/manga");
 
 //Config express route to let React router handle routing
-var route = ["/", "/new", "/register","/detail/*","/read/*","/edit/*","/add/*"];
+var route = ["/", "/new", "/register", "/detail/*", "/read/*", "/edit/*", "/add/*", "/list/*"];
 app.get(route, (req, res) => {
     res.sendFile(appDir + "/index.html");
 });
@@ -85,7 +85,7 @@ app.post("/new", upload.single("file"), (req, res) => {
     var username = req.body.username;
     var password = req.body.password;
     userModel.login(username, password, (data, err) => {
-        if (err) res.send(err);
+        if (err) resolve.writeHead(500, err);
         if (data) {
             imgur.uploadFile(req.file.path)
                 .then(json => {
@@ -113,13 +113,13 @@ app.post("/new", upload.single("file"), (req, res) => {
 
                     newManga.save(err => {
                         if (err) throw err;
-                        res.send("New manga added");
+                        res.send(newManga._id);
                     })
                     fs.unlink(req.file.path, err => {
                         if (err) throw err;
                     })
                 })
-                .catch(err => console.log(err.massage));
+                .catch(err => res.writeHead(500, err));
         }
     })
 
@@ -127,49 +127,54 @@ app.post("/new", upload.single("file"), (req, res) => {
 
 //Handle new chapter request
 app.post("/chap/new/:id", upload.array("files"), (req, res) => {
-    var files = [];
-    req.files.map((file, index) => {
-        files.push(file.path);
-    })
-    var id = req.params.id;
-    manga.findOne({ _id: id }, (err, data) => {
-        if (err) res.writeHead(500, err);
+    var username = req.body.username;
+    var password = req.body.password;
+    userModel.login(username, password, (data, err) => {
         if (data) {
-            res.send("Server recieved files");
-            var newChapter = data.chapter;
-            newChapter.push([[], [], []]);
-            var i = 0;
-            function uploadMulti() {
-                if (i < files.length) {
-                    imgur.uploadFile(files[i])
-                        .then(json => {
-                            fs.unlink(files[i]);
-                            var length = newChapter.length;
-                            newChapter[length - 1][0].push(json.data.link);
-                            i += 1;
-                            uploadMulti();
-                        })
-                        .catch(err => {
-                            fs.unlink(files[i]);
-                            console.log(err);
-                        });
+            var files = [];
+            req.files.map((file, index) => {
+                files.push(file.path);
+            })
+            var id = req.params.id;
+            manga.findOne({ _id: id }, (err, data) => {
+                if (err) res.writeHead(500, err);
+                if (data) {
+                    res.send("Server recieved files");
+                    var newChapter = data.chapter;
+                    newChapter.push([[], [], []]);
+                    var i = 0;
+                    function uploadMulti() {
+                        if (i < files.length) {
+                            imgur.uploadFile(files[i])
+                                .then(json => {
+                                    fs.unlink(files[i]);
+                                    var length = newChapter.length;
+                                    newChapter[length - 1][0].push(json.data.link);
+                                    i += 1;
+                                    uploadMulti();
+                                })
+                                .catch(err => {
+                                    fs.unlink(files[i]);
+                                    console.log(err);
+                                });
+                        }
+                        if (i === files.length) {
+                            manga.findOneAndUpdate({ _id: id }, { $set: { chapter: newChapter } }, { new: true }, (err, doc, data) => {
+                                if (err) console.log(err);
+                            })
+                        }
+                    }
+                    uploadMulti();
                 }
-                if (i === files.length) {
-                    manga.findOneAndUpdate({ _id: id }, { $set: { chapter: newChapter } }, { new: true }, (err, doc, data) => {
-                        if (err) console.log(err);
-                    })
-                }
-            }
-            uploadMulti();
+            })
+        } 
+        else {
+            res.writeHead(401,err);
         }
     })
+
 })
 
-app.get("/clear", (req, res) => {
-    manga.findOneAndUpdate({ _id: "5a7197e04ea587044090a140" }, { $set: { chapter: [] } }, (err, res) => {
-        console.log("clear");
-    })
-})
 
 //Handle Manga delete request 
 app.post("/remove/manga/:id", (req, res) => {

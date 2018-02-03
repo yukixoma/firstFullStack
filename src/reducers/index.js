@@ -1,10 +1,9 @@
 import {combineReducers} from 'redux';
-import Home from './Home';
+import Manga from './Manga';
 import Detail from './Detail';
 
 const appReducers = combineReducers({
-    Home,
-    Detail
+    Manga,
 });
 
 export default appReducers;

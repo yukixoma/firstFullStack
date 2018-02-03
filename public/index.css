@@ -50,6 +50,7 @@ body {
 
 .home-page-cover {
     height: 220px;
+    max-width: 170px;
     width: auto;
     display:block;
     margin:auto;

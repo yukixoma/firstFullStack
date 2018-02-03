@@ -10,6 +10,7 @@ import Register from './Pages/Register';
 import AddChapter from './Pages/AddChapter';
 import Reader from './Pages/Reader';
 import NewManga from './Pages/NewManga';
+import NotFound from './Pages/NotFound';
 
 
 

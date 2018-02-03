@@ -1,57 +1,54 @@
 import React, { Component } from 'react';
 import { Redirect, Link } from 'react-router-dom';
-import apiCaller from '../apiCaller';
+import { connect } from 'react-redux';
+import { actFetchUserUploadedManga } from './../actions/index';
 
 class EditManga extends Component {
     constructor(props) {
         super(props)
         this.state = {
             msg: "",
-            mangas: []
         }
     }
 
-    componentDidMount() {
+    componentWillMount() {
         let username = localStorage.getItem("username");
         let password = localStorage.getItem("password");
-        let user = {
-            username,
-            password
-        }
-        if (username) {
-            apiCaller("POST", "/fetchUserUploadedManga", user, (data, err) => {
-                if (data.data !== "Authentication error") this.setState({ mangas: data.data });
-                else alert("Authentication error, re-login please");
-            })
+        if (!username || !password) {
+            alert("Please log in");
+            window.location.replace("/")
         }
         else {
-            alert("Please log in");
-            window.location.replace("/");
-        };
+            console.log(username);
+            this.props.getUserUploadedManga(username);
+        }
     }
 
     onDelete = (e) => {
         e.preventDefault();
-        let username = localStorage.getItem("username");
-        let password = localStorage.getItem("password");
-        let user = {
-            username,
-            password
-        }
-        let mangaID = e.target.value;
-        let endPoint = "/remove/manga/" + mangaID;
-        apiCaller("POST", endPoint, user, (data, err) => {
-            if (err) throw err;
-            this.setState({
-                msg: "Manga deleted",
-                mangas: data.data
+        let Confirm = confirm("Are you really wan't to delete this?");
+        if (Confirm) {
+            let username = localStorage.getItem("username");
+            let password = localStorage.getItem("password");
+            let user = {
+                username,
+                password
+            }
+            let mangaID = e.target.value;
+            let endPoint = "/remove/manga/" + mangaID;
+            apiCaller("POST", endPoint, user, (data, err) => {
+                if (err) throw err;
+                this.setState({
+                    msg: "Manga deleted",
+                    mangas: data.data
+                })
             })
-        })
-
+        }
     }
 
     render() {
-        let { mangas, msg } = this.state;
+        let { msg } = this.state;
+        let mangas = this.props.mangaUploadedByUser;
         let alert = "alert";
         let result = [];
         for (let i = 0; i < mangas.length; i++) {
@@ -63,16 +60,17 @@ class EditManga extends Component {
                         <Link to={"/add/chapter/" + mangas[i]._id} exact="true">
                             <button type="button" class="btn mr-sm-2 btn-info">
                                 New Chapter
-                            </button>
+                                </button>
                         </Link>
                         <button type="button" class="btn mr-sm-2 btn-warning">Edit</button>
                         <button type="button" class="btn mr-sm-2 btn-danger" value={mangas[i]._id} onClick={this.onDelete}>
                             Delete
-                        </button>
+                            </button>
                     </td>
                 </tr>
             )
         }
+
         return (
             <div className="container">
                 <div className="card">
@@ -97,4 +95,18 @@ class EditManga extends Component {
     }
 }
 
-export default EditManga;
+const mapStateToProps = state => {
+    return {
+        mangaUploadedByUser: state.Manga
+    }
+}
+
+const mapDispatchToProps = (dispacth, props) => {
+    return {
+        getUserUploadedManga: username => {
+            dispacth(actFetchUserUploadedManga(username));
+        }
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(EditManga);

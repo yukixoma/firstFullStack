@@ -7,29 +7,30 @@ export const actFetchAllMangaFromServer = () => {
     return (dispatch) => {
         return apiCaller("GET", "/fetchMangaList", null, (res, err) => {
             if(err) throw err;
+            let allManga = JSON.stringify(res.data);
+            localStorage.setItem("allManga",allManga);
             dispatch(actFetchAllManga(res.data));
         })
     }
 }
 
-export const actFetchMangaInfoFromServer = (id) => {
-    return (dispatch) => {
-        return apiCaller("GET","/fetchMangaInfo/"+id,null,(res,err)=> {
-            if(err) throw err;
-            dispatch(actFetchMangaInfo(res.data));
-        })
-    }
-}
-
-const actFetchAllManga = (mangas) => {
+const actFetchAllManga = mangas => {
     return {
         type: Types.FETCH_ALL_MANGA,
         mangas
     }
 }
-const actFetchMangaInfo = (manga) => {
+
+export const actFetchMangaInfo = id => {
     return {
         type: Types.GET_MANGA_INFO,
-        manga
+        id
+    }
+}
+
+export const actFetchUserUploadedManga = username => {
+    return {
+        type: Types.GET_USER_UPLOADED_MANGA,
+        username
     }
 }
