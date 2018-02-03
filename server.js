@@ -1,10 +1,13 @@
 var express = require("express");
 var path = require("path");
 var fs = require("fs");
+//Get root path
+var appDir = path.dirname(require.main.filename);
 
 //App create
 var app = express();
-app.use(express.static(path.join(__dirname, "public")));
+//Config static serving folder
+app.use("/public", express.static(appDir + "/public"));
 
 //multer handle file upload
 var multer = require("multer");
@@ -38,11 +41,10 @@ var manga = require("./models/manga");
 mongoose.connect("mongodb://yukixoma:123456789@ds046357.mlab.com:46357/manga");
 
 //Config express route to let React router handle routing
-var route = ["/", "/new", "/register",];
+var route = ["/", "/new", "/register","/detail/*","/read/*","/edit/*","/add/*"];
 app.get(route, (req, res) => {
-    res.sendFile(path.resolve("./", "index.html"));
+    res.sendFile(appDir + "/index.html");
 });
-
 
 //Config express route to let Client fetch data
 app.get("/fetchMangaList", (req, res) => {
@@ -143,7 +145,7 @@ app.post("/chap/new/:id", upload.array("files"), (req, res) => {
                         .then(json => {
                             fs.unlink(files[i]);
                             var length = newChapter.length;
-                            newChapter[length - 1][0].push(json.data.link);    
+                            newChapter[length - 1][0].push(json.data.link);
                             i += 1;
                             uploadMulti();
                         })
@@ -213,11 +215,11 @@ app.post("/login", (req, res) => {
 
 
 
-app.post("/test", upload.array("files"),(req,res) => {
+app.post("/test", upload.array("files"), (req, res) => {
     res.send("Server recieved files");
     req.files.map((file, index) => {
-        fs.unlink(file.path,err=> {
-            if(err) res.send(err);
+        fs.unlink(file.path, err => {
+            if (err) res.send(err);
         })
     })
 })

@@ -27,12 +27,14 @@ class AddChapter extends Component {
                 msg: "Server recieved files and continue uploading to image Host." +
                     "Your new chapter will be added after server upload is done." +
                     "Auto redirect in 1 minute."
-            },setTimeout(
-                this.setState({
-                    uploadIsDone: true,
-                })
-            ),60000)
-        } 
+            }, setTimeout(
+                () => {
+                    this.setState({
+                        uploadIsDone: true,
+                    })
+                }
+            ), 120000)
+        }
         else {
             this.setState({
                 alert: "alert alert-danger",
@@ -44,10 +46,10 @@ class AddChapter extends Component {
     render() {
         let { id } = this.props.match.params;
         let { previewUrl, alert, msg, uploadIsDone } = this.state;
-        if(uploadIsDone) {return <Redirect to="/edit/manga" />;}
+        if (uploadIsDone) { return <Redirect to="/edit/manga" />; }
         return (
             <div className="container">
-                <div className={alert} role="alert" style={{marginTop: 10}}>
+                <div className={alert} role="alert" style={{ marginTop: 10 }}>
                     {msg}
                 </div>
                 <div className="row">
