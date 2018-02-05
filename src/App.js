@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom';
 import Navbar from './components/Navbar';
 import Header from './components/Header';
 import { Route, Switch, BrowserRouter, browserHistory } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { actFetchAllMangaFromServer } from './actions/index';
 import Home from './Pages/Home';
 import Detail from './Pages/Detail';
 import EditManga from './Pages/EditManga';
@@ -22,6 +24,10 @@ class App extends Component {
         }
     }
 
+    componentWillMount() {
+        this.props.fetchAllManga();
+    }
+
     onLogInOut = (option) => {
         this.setState({
             state: option
@@ -29,17 +35,22 @@ class App extends Component {
     }
 
     render() {
+        let { mangas } = this.props;
         return (
             <BrowserRouter history={browserHistory}>
                 <Fragment>
                     <Header LogInOut={this.onLogInOut} />
-                    <Navbar />
+                    <Navbar mangas={mangas} />
                     <Switch>
-                        <Route path="/" exact component={Home} />
+                        <Route path="/" note="abc" exact
+                            render={() => <Home mangas={mangas} />}
+                        />
                         <Route path="/new" exact component={NewManga} />
                         <Route path="/detail/:id" component={Detail} />
                         <Route path="/edit/manga" component={EditManga} />
-                        <Route path="/add/chapter/:id" component={AddChapter} />
+                        <Route path="/add/chapter/:id"
+                            render={(match) => <AddChapter match={match.match} mangas={mangas} />}
+                        />
                         <Route path="/register" component={Register} />
                         <Route path="/read/:id/:chapter" component={Reader} />
                     </Switch>
@@ -49,4 +60,18 @@ class App extends Component {
     }
 }
 
-export default App;
+const mapStateToProps = state => {
+    return {
+        mangas: state.Manga
+    }
+}
+
+const mapDispatchToProps = (dispatch, props) => {
+    return {
+        fetchAllManga: () => {
+            dispatch(actFetchAllMangaFromServer())
+        }
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);

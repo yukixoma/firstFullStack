@@ -49,12 +49,28 @@ class AddChapter extends Component {
     }
 
     render() {
-        let { id } = this.props.match.params;
+        let { mangas, match } = this.props;
+        let { id } = match.params;
+        let manga = mangas.filter(e => {
+            return e._id === id;
+        })
+
         let { previewUrl, alert, msg, uploadIsDone } = this.state;
         return (
             <div className="container">
                 <div className={alert} role="alert" style={{ marginTop: 10 }}>
                     <h5 className="text-center"> {msg} </h5>
+                </div>
+                <div className="alert alert-warning" role="alert">
+                    New chapter of: &nbsp;
+                    <a href={"/detail/" + manga[0]._id} target="_blank">
+                        {manga[0].name}
+                    </a>
+                    <br />
+                    <a href={"/read/" + manga[0]._id + "/" + (manga[0].chapter.length - 1)} target="_blank">
+                        Lastest chapter:
+                    </a>
+                    &nbsp; <strong> {manga[0].chapter.length} </strong>
                 </div>
                 <div className="row">
                     <div className="col-lg-6">

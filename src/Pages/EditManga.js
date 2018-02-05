@@ -7,6 +7,8 @@ class EditManga extends Component {
     constructor(props) {
         super(props)
         this.state = {
+            page: 1,
+            itemPerPage: 5,
             msg: "",
         }
     }
@@ -14,13 +16,12 @@ class EditManga extends Component {
     componentWillMount() {
         let username = localStorage.getItem("username");
         let password = localStorage.getItem("password");
-        if (!username || !password) {
-            alert("Please log in");
-            window.location.replace("/")
+        if (username && password) {
+            this.props.getUserUploadedManga(username);
         }
         else {
-            console.log(username);
-            this.props.getUserUploadedManga(username);
+            alert("Please log in");
+            window.location.replace("/")
         }
     }
 
@@ -46,24 +47,49 @@ class EditManga extends Component {
         }
     }
 
-    render() {
-        let { msg } = this.state;
+    onPaginate = e => {
+        e.preventDefault();
+        let { page, itemPerPage } = this.state;
+        let { value } = e.target;
         let mangas = this.props.mangaUploadedByUser;
+        if (value === "+" && (page - 1) * itemPerPage < mangas.length - 1) {
+            this.setState({
+                page: page + 1
+            }, () => {
+                window.scroll(0, 0);
+            })
+        }
+        if (value === "-" && page > 1) {
+            this.setState({
+                page: page - 1
+            }, () => {
+                window.scroll(0, 0);
+            })
+        }
+    }
+
+    render() {
+        let { msg, page, itemPerPage } = this.state;
+        let mangas = this.props.mangaUploadedByUser;
+        let paginated = [];
+        for (let i = (page - 1) * itemPerPage; i < mangas.length && i < (page * itemPerPage); i++) {
+            paginated.push(mangas[i]);
+        }
         let alert = "alert";
         let result = [];
-        for (let i = 0; i < mangas.length; i++) {
+        for (let i = 0; i < paginated.length; i++) {
             result.push(
                 <tr key={i}>
-                    <th>{mangas[i]._id}</th>
-                    <td><Link to={"/detail/" + mangas[i]._id} exact="true"> {mangas[i].name} </Link></td>
+                    <th>{paginated[i]._id}</th>
+                    <td><Link to={"/detail/" + paginated[i]._id} exact="true"> {paginated[i].name} </Link></td>
                     <td>
-                        <Link to={"/add/chapter/" + mangas[i]._id} exact="true">
+                        <Link to={"/add/chapter/" + paginated[i]._id} exact="true">
                             <button type="button" class="btn mr-sm-2 btn-info">
                                 New Chapter
                                 </button>
                         </Link>
                         <button type="button" class="btn mr-sm-2 btn-warning">Edit</button>
-                        <button type="button" class="btn mr-sm-2 btn-danger" value={mangas[i]._id} onClick={this.onDelete}>
+                        <button type="button" class="btn mr-sm-2 btn-danger" value={paginated[i]._id} onClick={this.onDelete}>
                             Delete
                             </button>
                     </td>
@@ -89,6 +115,20 @@ class EditManga extends Component {
                             {result}
                         </tbody>
                     </table>
+                    <div className="row">
+                        <div className="col-lg-4"> </div>
+                        <div className="col-lg-4">
+                            <form className="form-inline">
+                            <button type="button" value="-" className="btn btn-danger mr-sm-2" onClick={this.onPaginate}>
+                                Prev
+                            </button>
+                            <input className="form-control text-center paginate-input mr-sm-2" value={page} onChange={this.onChange} />
+                            <button type="button" value="+" className="btn btn-success " onClick={this.onPaginate}>
+                                Next
+                            </button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
         )

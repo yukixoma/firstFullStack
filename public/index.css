@@ -81,3 +81,12 @@ body {
     margin-left: auto;
     margin-right: auto;
 }
+
+.paginate-input {
+    width: 140px !important;
+}
+.search-box {
+    position: absolute;
+    right: 0 !important;
+    z-index: 999 !important;
+}

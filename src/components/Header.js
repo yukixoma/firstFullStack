@@ -48,6 +48,7 @@ class Header extends Component {
             password: ""
         })
         this.props.LogInOut("out");
+        window.location.replace("/")
     }
 
     render() {

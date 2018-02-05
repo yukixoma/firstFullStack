@@ -9,12 +9,6 @@ class MainCenter extends Component {
             page: 1
         }
     }
-    onPagination = (e) => {
-        e.preventDefault();
-        let { value } = e.target;
-        if (value === "+") this.setState({ page: this.state.page + 1 });
-        else if (this.state.page > 1) this.setState({ page: this.state.page - 1 });
-    }
 
     render() {
         let { mangas } = this.props;
@@ -36,7 +30,7 @@ class MainCenter extends Component {
                             </div>
                             <div className="col-lg-8">
                                 <h4 className="card-title">
-                                    <Link to={"/detail/" + mangas[i]._id}>
+                                    <Link to={"/detail/" + mangas[i]._id} target="_blank">
                                         {mangas[i].name}
                                     </Link>
                                 </h4>
@@ -63,18 +57,6 @@ class MainCenter extends Component {
         return (
             <div>
                 {result}
-                <div className="text-center">
-                    <button type="button" className="btn btn-danger mr-sm-2" value="-"
-                        onClick={this.onPagination}
-                    >
-                        Pre
-                    </button>
-                    <button type="button" className="btn btn-success" value="+"
-                        onClick={this.onPagination}
-                    >
-                        Next
-                    </button>
-                </div>
             </div>
         )
     }

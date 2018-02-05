@@ -90,7 +90,7 @@ class Uploader extends Component {
                             {result}
                         </div>
                         <div className="col-lg-4 text-right">
-                            <label> Manga pages </label>
+                            <label> Number of pages </label>
                             <input
                                 className="form-control add-chapter-button"
                                 value={uploadNumber}
