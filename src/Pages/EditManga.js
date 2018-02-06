@@ -86,9 +86,13 @@ class EditManga extends Component {
                         <Link to={"/add/chapter/" + paginated[i]._id} exact="true">
                             <button type="button" class="btn mr-sm-2 btn-info">
                                 New Chapter
-                                </button>
+                            </button>
                         </Link>
-                        <button type="button" class="btn mr-sm-2 btn-warning">Edit</button>
+                        <Link to={"/edit/manga/" + paginated[i]._id}>
+                            <button type="button" class="btn mr-sm-2 btn-warning">
+                                Edit
+                            </button>
+                        </Link>
                         <button type="button" class="btn mr-sm-2 btn-danger" value={paginated[i]._id} onClick={this.onDelete}>
                             Delete
                             </button>
@@ -119,12 +123,12 @@ class EditManga extends Component {
                         <div className="col-lg-4"> </div>
                         <div className="col-lg-4">
                             <form className="form-inline">
-                            <button type="button" value="-" className="btn btn-danger mr-sm-2" onClick={this.onPaginate}>
-                                Prev
+                                <button type="button" value="-" className="btn btn-danger mr-sm-2" onClick={this.onPaginate}>
+                                    Prev
                             </button>
-                            <input className="form-control text-center paginate-input mr-sm-2" value={page} onChange={this.onChange} />
-                            <button type="button" value="+" className="btn btn-success " onClick={this.onPaginate}>
-                                Next
+                                <input className="form-control text-center paginate-input mr-sm-2" value={page} onChange={this.onChange} />
+                                <button type="button" value="+" className="btn btn-success " onClick={this.onPaginate}>
+                                    Next
                             </button>
                             </form>
                         </div>

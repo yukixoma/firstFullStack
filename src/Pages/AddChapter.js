@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Uploader from '../components/Uploader';
-import Preview from '../components/Preview';
+import NewChapterPreview from '../components/NewChapterPreview';
 import { Redirect } from 'react-router';
 
 class AddChapter extends Component {
@@ -82,7 +82,7 @@ class AddChapter extends Component {
                         />
                     </div>
                     <div className="col-lg-6">
-                        <Preview previewUrl={previewUrl} />
+                        <NewChapterPreview previewUrl={previewUrl} />
                     </div>
                 </div>
             </div>

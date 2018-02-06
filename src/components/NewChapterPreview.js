@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-class Preview extends Component {
+class NewChapterPreview extends Component {
     render() {
         let preview = [];
         let { previewUrl } = this.props;
@@ -20,4 +20,4 @@ class Preview extends Component {
     }
 }
 
-export default Preview;
+export default NewChapterPreview;

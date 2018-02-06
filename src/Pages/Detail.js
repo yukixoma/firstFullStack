@@ -6,19 +6,35 @@ import MainRight from './../components/MainRight';
 import MangaInfo from '../components/MangaInfo';
 
 class Detail extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            id: "",
+            manga: {}
+        }
+    }
+
     componentWillMount() {
         let id = this.props.match.params.id;
-        this.props.getMangaInfo(id);
+        let allManga = localStorage.getItem("allManga");
+        allManga = JSON.parse(allManga);
+        let manga = allManga.filter(e => {
+            return e._id === id;
+        })
+        this.setState({
+            id,
+            manga: manga[0]
+        });
     }
+
     render() {
-        let id = this.props.match.params.id;
-        let manga = this.props.manga;
+        let { manga, id } = this.state;
         return (
             <div className="row">
                 <div className="col-lg-3"><MainLeft /></div>
                 <div className="col-lg-6">
                     <MangaInfo
-                        manga={manga[0]}
+                        manga={manga}
                         id={id}
                     />
                 </div>
@@ -28,19 +44,6 @@ class Detail extends Component {
     }
 }
 
-const mapStateToProps = state => {
-    return {
-        manga: state.Manga
-    }
-}
-
-const mapDispatchToProps = (dispatch, props) => {
-    return {
-        getMangaInfo: id => {
-            dispatch(actFetchMangaInfo(id));
-        }
-    }
-}
 
 
-export default connect(mapStateToProps, mapDispatchToProps)(Detail);
+export default Detail;

@@ -22,7 +22,8 @@ class Uploader extends Component {
     onChangeHandle = (e) => {
         let { previewUrl } = this.props;
         let imgPosition = e.target.id;
-        previewUrl[imgPosition] = (URL.createObjectURL(e.target.files[0]));
+        let isLink = e.target.files[0] ? true : false;
+        previewUrl[imgPosition] = isLink? URL.createObjectURL(e.target.files[0]) : "";
         this.props.onReceivepreViewUrl(previewUrl);
     }
 

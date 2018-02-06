@@ -13,6 +13,7 @@ import AddChapter from './Pages/AddChapter';
 import Reader from './Pages/Reader';
 import NewManga from './Pages/NewManga';
 import NotFound from './Pages/NotFound';
+import EditMangaInfo from './Pages/EditMangaInfo';
 
 
 
@@ -47,7 +48,8 @@ class App extends Component {
                         />
                         <Route path="/new" exact component={NewManga} />
                         <Route path="/detail/:id" component={Detail} />
-                        <Route path="/edit/manga" component={EditManga} />
+                        <Route path="/edit/manga" exact component={EditManga} />
+                        <Route path="/edit/manga/:id" exact component={EditMangaInfo} />
                         <Route path="/add/chapter/:id"
                             render={(match) => <AddChapter match={match.match} mangas={mangas} />}
                         />

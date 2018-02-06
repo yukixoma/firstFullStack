@@ -11,6 +11,7 @@ initialState = initialState.sort((a, b) => {
 const Manga = (state = initialState, action) => {
     switch (action.type) {
         case Types.FETCH_ALL_MANGA:
+            state = initialState;
             return state;
         case Types.GET_MANGA_INFO:
             state = initialState;

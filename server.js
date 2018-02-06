@@ -56,13 +56,6 @@ app.get("/fetchMangaList", (req, res) => {
     })
 })
 
-app.get("/fetchMangaInfo/:id", (req, res) => {
-    var id = req.params.id;
-    manga.findOne({ _id: id }, (err, data) => {
-        if (err) res.writeHead(500, "Database error");
-        if (data) res.send(data);
-    })
-})
 
 app.post("/fetchUserUploadedManga", (req, res) => {
     var username = req.body.username;
@@ -85,7 +78,7 @@ app.post("/new", upload.single("file"), (req, res) => {
     var username = req.body.username;
     var password = req.body.password;
     userModel.login(username, password, (data, err) => {
-        if (err) resolve.writeHead(500, err);
+        if (err) res.writeHead(500, err);
         if (data) {
             imgur.uploadFile(req.file.path)
                 .then(json => {
@@ -97,7 +90,6 @@ app.post("/new", upload.single("file"), (req, res) => {
                     var genre = req.body.genre.split(", ");
                     var description = req.body.description;
                     var status = req.body.status;
-                    var username = "yukixoma";
 
                     var newManga = new manga({
                         name: name,
@@ -124,6 +116,67 @@ app.post("/new", upload.single("file"), (req, res) => {
     })
 
 });
+
+//Handle Edit manga info request 
+app.post("/editMangaInfo", upload.single("file"), (req, res) => {
+    var username = req.body.username;
+    var password = req.body.password;
+    var id = req.body.id;
+    var name = req.body.name;
+    var subName = req.body.subName;
+    var cover = "";
+    var author = req.body.author;
+    var group = req.body.group;
+    var genre = req.body.genre.split(", ");
+    var description = req.body.description;
+    var status = req.body.status;
+    userModel.login(username, password, (data, err) => {
+        if (err) res.writeHead(500, err);
+        if (data) {
+            if (req.file) {
+                imgur.uploadFile(req.file.path)
+                    .then(json => {
+                        cover = json.data.link;
+                        fs.unlink(req.file.path, err => {
+                            if (err) throw err;
+                        })
+                        update(id, name, subName, cover, author, group, genre, description, status);
+                        res.send("Manga info updated");
+                    })
+                    .catch(err => res.writeHead(500, err));
+            } else {
+                update(id, name, subName, cover, author, group, genre, description, status);
+                res.send("Manga info updated");
+            }
+        }
+    })
+
+    function update(id, name, subName, cover, author, group, genre, description, status) {
+        var set = {
+            name: name,
+            subName: subName,
+            author: author,
+            group: group,
+            genre: genre,
+            description: description,
+            status: status
+        }
+        if(cover) set.cover = cover;
+        manga.findOneAndUpdate(
+            {
+                _id: id
+            },
+            {
+                $set: set
+            },
+            {
+                new: true
+            },
+            (err, doc, data) => {
+                if (err) console.log(err);
+            })
+    }
+})
 
 //Handle new chapter request
 app.post("/chap/new/:id", upload.array("files"), (req, res) => {
@@ -167,13 +220,14 @@ app.post("/chap/new/:id", upload.array("files"), (req, res) => {
                     uploadMulti();
                 }
             })
-        } 
+        }
         else {
-            res.writeHead(401,err);
+            res.writeHead(401, err);
         }
     })
 
 })
+
 
 
 //Handle Manga delete request 
