@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Redirect, Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { actFetchUserUploadedManga } from './../actions/index';
+import paginate from '../paginate';
 
 class EditManga extends Component {
     constructor(props) {
@@ -71,10 +72,7 @@ class EditManga extends Component {
     render() {
         let { msg, page, itemPerPage } = this.state;
         let mangas = this.props.mangaUploadedByUser;
-        let paginated = [];
-        for (let i = (page - 1) * itemPerPage; i < mangas.length && i < (page * itemPerPage); i++) {
-            paginated.push(mangas[i]);
-        }
+        let paginated = paginate(mangas,itemPerPage,page,1);
         let alert = "alert";
         let result = [];
         for (let i = 0; i < paginated.length; i++) {

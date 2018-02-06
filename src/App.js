@@ -47,7 +47,9 @@ class App extends Component {
                             render={() => <Home mangas={mangas} />}
                         />
                         <Route path="/new" exact component={NewManga} />
-                        <Route path="/detail/:id" component={Detail} />
+                        <Route path="/detail/:id"
+                            render={(match) => <Detail match={match.match} mangas={mangas} />}
+                        />
                         <Route path="/edit/manga" exact component={EditManga} />
                         <Route path="/edit/manga/:id" exact component={EditMangaInfo} />
                         <Route path="/add/chapter/:id"

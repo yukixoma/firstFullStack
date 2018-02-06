@@ -16,9 +16,8 @@ class Detail extends Component {
 
     componentWillMount() {
         let id = this.props.match.params.id;
-        let allManga = localStorage.getItem("allManga");
-        allManga = JSON.parse(allManga);
-        let manga = allManga.filter(e => {
+        let { mangas } = this.props;
+        let manga = mangas.filter(e => {
             return e._id === id;
         })
         this.setState({

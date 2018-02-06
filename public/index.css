@@ -85,6 +85,11 @@ body {
 .paginate-input {
     width: 140px !important;
 }
+
+.page-index {
+    border-radius: 20px !important;
+    width: 100px !important;
+}
 .search-box {
     position: absolute;
     right: 0 !important;
