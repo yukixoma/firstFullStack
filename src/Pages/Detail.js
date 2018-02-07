@@ -1,6 +1,4 @@
 import React, { Component } from 'react';
-import { actFetchMangaInfo } from './../actions/index';
-import { connect } from 'react-redux';
 import MainLeft from './../components/MainLeft';
 import MainRight from './../components/MainRight';
 import MangaInfo from '../components/MangaInfo';

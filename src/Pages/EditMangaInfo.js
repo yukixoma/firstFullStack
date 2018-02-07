@@ -1,6 +1,4 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { actFetchMangaInfo } from './../actions/index';
 import MangaInfoPreview from './../components/MangaInfoPreview';
 import apiCaller from '../apiCaller';
 
@@ -99,7 +97,7 @@ class EditMangaInfo extends Component {
         let username = localStorage.getItem("username");
         let password = localStorage.getItem("password");
         let { manga, id, addGenre, msg, newCover } = this.state;
-        let { name, subName, cover, author, group, genre, description, status, chapter } = manga;
+        let { name, subName, author, group, genre, description, status } = manga;
         let genres = [];
         genre.forEach(element => {
             genres.push(" " + element);

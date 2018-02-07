@@ -80,7 +80,7 @@ class Uploader extends Component {
         }
         return (
             <div className="card">
-                <h3 class="card-header" style={{ backgroundColor: "#428bca", color: "white" }}>Uploader</h3>
+                <h3 class="card-header" style={{ backgroundColor: "#428bca", color: "white" }}>Single Uploader</h3>
                 <div className="card-block" >
                     <form className="row" id="form" encType="multipart/formdata" onSubmit={this.onUpload}>
                         <div style={{ display: "none" }}>

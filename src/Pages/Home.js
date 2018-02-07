@@ -3,7 +3,6 @@ import TopPanel from './../components/TopPanel';
 import MainLeft from './../components/MainLeft';
 import MainCenter from './../components/MainCenter';
 import MainRight from './../components/MainRight';
-import { connect } from 'react-redux';
 import paginate from '../paginate';
 
 class HomePage extends Component {
@@ -40,7 +39,7 @@ class HomePage extends Component {
     onManualPaginate = e => {
         let { itemPerPage } = this.state;
         let { mangas } = this.props;
-        let { value, name } = e.target;
+        let { value } = e.target;
         value = value ? parseInt(value, 10) : value;
         if (value > 0 && (value - 1) * itemPerPage < mangas.length) {
             this.setState({ page: value });

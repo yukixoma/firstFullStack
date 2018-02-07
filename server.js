@@ -13,8 +13,11 @@ app.use("/public", express.static(appDir + "/public"));
 var multer = require("multer");
 var upload = multer({ dest: 'tmp/' });
 
+
+
 //Connect to Imgur
 var imgur = require("imgur");
+var clientID = ["cdfc0eef74ecfc9", "7f3eb97b787812d", "3e18908bb8d5a8f", "c08857d7784f570", "ec75d3f43886523","360ec78c61b2d44"];
 imgur.setClientId("360ec78c61b2d44");
 
 //body parser parse form data
@@ -161,7 +164,7 @@ app.post("/editMangaInfo", upload.single("file"), (req, res) => {
             description: description,
             status: status
         }
-        if(cover) set.cover = cover;
+        if (cover) set.cover = cover;
         manga.findOneAndUpdate(
             {
                 _id: id
@@ -196,7 +199,11 @@ app.post("/chap/new/:id", upload.array("files"), (req, res) => {
                     var newChapter = data.chapter;
                     newChapter.push([[], [], []]);
                     var i = 0;
+                    var j = 0;
                     function uploadMulti() {
+                        if (j > 5) j = 0;
+                        imgur.setClientId(clientID[j]);
+                        j += 1;
                         if (i < files.length) {
                             imgur.uploadFile(files[i])
                                 .then(json => {
@@ -208,6 +215,8 @@ app.post("/chap/new/:id", upload.array("files"), (req, res) => {
                                 })
                                 .catch(err => {
                                     fs.unlink(files[i]);
+                                    i += 1;
+                                    uploadMulti();
                                     console.log(err);
                                 });
                         }
