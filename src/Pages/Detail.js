@@ -14,10 +14,13 @@ class Detail extends Component {
 
     componentWillMount() {
         let id = this.props.match.params.id;
-        let { mangas } = this.props;
+        let allManga = localStorage.getItem("allManga");
+        let mangas = JSON.parse(allManga);
         let manga = mangas.filter(e => {
             return e._id === id;
         })
+        console.log(mangas);
+        console.log(manga);
         this.setState({
             id,
             manga: manga[0]

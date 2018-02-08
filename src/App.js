@@ -32,6 +32,8 @@ class App extends Component {
             this.setState({
                 mangas: res.data
             })
+            let allManga = JSON.stringify(res.data);
+            localStorage.setItem("allManga",allManga);
         })
     }
 

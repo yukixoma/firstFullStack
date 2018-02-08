@@ -29,6 +29,7 @@ class Reader extends Component {
         let manga = mangas.filter(e=> {
             return e._id === id;
         })
+        console.log(manga.name);
         let mangaName = manga.name;
         manga = manga[0].chapter;
         chapter = parseInt(chapter, 10);
