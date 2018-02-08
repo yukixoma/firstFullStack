@@ -4,10 +4,11 @@ import { Link } from 'react-router-dom';
 class MangaInfo extends Component {
 
     render() {
+        let location = window.location.href;
         let { manga, id } = this.props;
         let result = [];
         let genres = [];
-        if (manga.chapter) {            
+        if (manga.chapter) {
             for (let i = 0; i < manga.chapter.length; i++) {
                 result.push(
                     <li key={i} className="list-group-item">
@@ -17,15 +18,15 @@ class MangaInfo extends Component {
                     </li>
                 )
             }
-            genres = manga.genre.map((genre,index) => {
-                return(
+            genres = manga.genre.map((genre, index) => {
+                return (
                     <Link className="badge badge-pill badge-info" key={index} to={"/list/genre/" + genre} exact="true" >
                         {genre}
                     </Link>
                 )
             })
         }
-        
+
         return (
             <div className="card manga-info">
                 <div className="card manga-info-item">
@@ -41,17 +42,18 @@ class MangaInfo extends Component {
                     </div>
                 </div>
                 <div className="card manga-info-item">
+                    <h3 className="card-header text-center">Info</h3>
                     <div className="card-block">
                         <p className="card-text">
                             <strong>Author:</strong> {manga.author}
-                            <br/>
+                            <br />
                             <strong>Diferent Name:</strong> {manga.subName}
                             <br />
                             <strong>Group:</strong> {manga.group}
                             <br />
                             <div>
                                 <strong>Genre:</strong> {genres}
-                            </div>                
+                            </div>
                             <strong>Upload by:</strong> {manga.username}
                             <br />
                             <strong>Status:</strong> {manga.status}
@@ -69,6 +71,12 @@ class MangaInfo extends Component {
                                 {result}
                             </ul>
                         </p>
+                    </div>
+                </div>
+                <div className="card manga-info-item">
+                    <h3 className="card-header">Comments</h3>
+                    <div className="card-block">
+                        <div class="fb-comments" data-href={location} data-numposts="5"></div>
                     </div>
                 </div>
             </div>

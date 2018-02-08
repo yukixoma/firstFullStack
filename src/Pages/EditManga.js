@@ -17,7 +17,9 @@ class EditManga extends Component {
         let username = localStorage.getItem("username");
         let password = localStorage.getItem("password");
         if (username && password) {
-            let mangas = this.props.mangas.filter(e => {
+            let allManga = localStorage.getItem("allManga");
+            allManga = JSON.parse(allManga);
+            let mangas = allManga.filter(e => {
                 return e.username === username;
             });
             this.setState({ mangas })
@@ -79,57 +81,55 @@ class EditManga extends Component {
         for (let i = 0; i < paginated.length; i++) {
             result.push(
                 <tr key={i}>
-                    <th>{paginated[i]._id}</th>
-                    <td><Link to={"/detail/" + paginated[i]._id} exact="true"> {paginated[i].name} </Link></td>
+                    <td style={{ width: 550 }}><Link to={"/detail/" + paginated[i]._id} exact="true"> {paginated[i].name} </Link></td>
                     <td>
                         <Link to={"/add/chapter/" + paginated[i]._id} exact="true">
-                            <button type="button" class="btn mr-sm-2 btn-info">
+                            <button type="button" class="btn mr-sm-2 btn-success">
                                 New Chapter
+                            </button>
+                        </Link>
+                        <Link to={"/edit/chapter/" + paginated[i]._id} exact="true">
+                            <button type="button" class="btn mr-sm-2 btn-info">
+                                Edit Chapter
                             </button>
                         </Link>
                         <Link to={"/edit/manga/" + paginated[i]._id}>
                             <button type="button" class="btn mr-sm-2 btn-warning">
-                                Edit
+                                Edit Manga
                             </button>
                         </Link>
                         <button type="button" class="btn mr-sm-2 btn-danger" value={paginated[i]._id} onClick={this.onDelete}>
                             Delete
-                            </button>
+                        </button>
                     </td>
                 </tr>
             )
         }
 
         return (
-            <div className="container">
+            <div className="container" style={{marginTop: 50}}>
                 <div className="card">
-                    <div className={alert} role="alert">
-                        {msg}
-                    </div>
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>id</th>
-                                <th>Name</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {result}
-                        </tbody>
-                    </table>
-                    <div className="row">
-                        <div className="col-lg-4"> </div>
-                        <div className="col-lg-4">
-                            <form className="form-inline">
-                                <button type="button" value="-" className="btn btn-danger mr-sm-2" onClick={this.onPaginate}>
-                                    Prev
+                    <h3 className="card-header text-center"> List of Mangas uploaded by you </h3>
+                    <div className="card-block">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th style={{ width: 550 }}>Name</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {result}
+                            </tbody>
+                        </table>
+                        <div className="row justify-content-center">
+                            <button type="button" value="-" className="btn btn-danger mr-sm-2" onClick={this.onPaginate}>
+                                Prev
                             </button>
-                                <input className="form-control text-center paginate-input mr-sm-2" value={page} onChange={this.onChange} />
-                                <button type="button" value="+" className="btn btn-success " onClick={this.onPaginate}>
-                                    Next
+                            <input className="form-control text-center paginate-input mr-sm-2" value={page} onChange={this.onChange} />
+                            <button type="button" value="+" className="btn btn-success " onClick={this.onPaginate}>
+                                Next
                             </button>
-                            </form>
                         </div>
                     </div>
                 </div>

@@ -19,8 +19,6 @@ class Detail extends Component {
         let manga = mangas.filter(e => {
             return e._id === id;
         })
-        console.log(mangas);
-        console.log(manga);
         this.setState({
             id,
             manga: manga[0]
@@ -36,7 +34,7 @@ class Detail extends Component {
                     <MangaInfo
                         manga={manga}
                         id={id}
-                    />
+                    />                    
                 </div>
                 <div className="col-lg-3"><MainRight /></div>
             </div>

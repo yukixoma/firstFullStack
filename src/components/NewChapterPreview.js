@@ -11,8 +11,8 @@ class NewChapterPreview extends Component {
         }
         return (
             <div className="card">
-                <h3 class="card-header" style={{backgroundColor: "#5cb85c",color:"white"}}>Preview</h3>
-                <div class="card-block">
+                <h3 className="card-header" style={{backgroundColor: "#5cb85c",color:"white"}}>Preview</h3>
+                <div className="card-block">
                     {preview}
                 </div>
             </div>

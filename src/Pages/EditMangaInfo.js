@@ -110,7 +110,7 @@ class EditMangaInfo extends Component {
             )
         })
         return (
-            <div className="container">
+            <div className="container" style={{marginTop: 20}}>
                 <div className="alert alert-info" role="alert">
                     {msg}
                 </div>

@@ -17,7 +17,7 @@ var upload = multer({ dest: 'tmp/' });
 
 //Connect to Imgur
 var imgur = require("imgur");
-var clientID = ["cdfc0eef74ecfc9", "7f3eb97b787812d", "3e18908bb8d5a8f", "c08857d7784f570", "ec75d3f43886523","360ec78c61b2d44"];
+var clientID = ["cdfc0eef74ecfc9", "7f3eb97b787812d", "3e18908bb8d5a8f", "c08857d7784f570", "ec75d3f43886523", "360ec78c61b2d44"];
 imgur.setClientId("360ec78c61b2d44");
 
 //body parser parse form data
@@ -215,6 +215,52 @@ app.post("/chap/new/:id", upload.array("files"), (req, res) => {
         }
         else {
             res.writeHead(401, err);
+        }
+    })
+
+})
+
+app.post("/chapter/add/:id/:chapter", upload.array("files"), (req, res) => {
+    var id = req.params.id;
+    var chapter = req.params.chapter;
+    res.send("Ok");
+    var files = [];
+    req.files.map((file, index) => {
+        files.push(file.path);
+    })
+    manga.findOne({ _id: id }, (err, data) => {
+        if (err) console.log(err);
+        if (data) {
+            var newChapter = data.chapter;
+            var i = 0;
+            var j = 0;
+            function uploadMulti() {
+                if (j > 5) j = 0;
+                imgur.setClientId(clientID[j]);
+                j += 1;
+                if (i < files.length) {
+                    imgur.uploadFile(files[i])
+                        .then(json => {
+                            fs.unlink(files[i]);
+                            var length = newChapter.length;
+                            newChapter[length - 1][0].push(json.data.link);
+                            i += 1;
+                            uploadMulti();
+                        })
+                        .catch(err => {
+                            fs.unlink(files[i]);
+                            i += 1;
+                            uploadMulti();
+                            console.log(err);
+                        });
+                }
+                if (i === files.length) {
+                    manga.findOneAndUpdate({ _id: id }, { $set: { chapter: newChapter } }, { new: true }, (err, doc, data) => {
+                        if (err) console.log(err);
+                    })
+                }
+            }
+            uploadMulti();
         }
     })
 

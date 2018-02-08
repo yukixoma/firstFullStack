@@ -25,12 +25,12 @@ class Reader extends Component {
         let chapterSelect = [];
         let { redirect, toPage } = this.state;
         let { id, chapter } = this.props.match.params;
-        let { mangas } = this.props;
-        let manga = mangas.filter(e=> {
+        let allManga = localStorage.getItem("allManga");
+        allManga = JSON.parse(allManga);
+        let manga = allManga.filter(e=> {
             return e._id === id;
         })
-        console.log(manga.name);
-        let mangaName = manga.name;
+        let mangaName = manga[0].name;
         manga = manga[0].chapter;
         chapter = parseInt(chapter, 10);
         if (redirect) {
