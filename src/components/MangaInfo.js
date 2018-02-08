@@ -7,9 +7,7 @@ class MangaInfo extends Component {
         let { manga, id } = this.props;
         let result = [];
         let genres = [];
-        if (manga.chapter) {
-            localStorage.setItem("manga", JSON.stringify(manga.chapter));
-            localStorage.setItem("mangaName", manga.name);
+        if (manga.chapter) {            
             for (let i = 0; i < manga.chapter.length; i++) {
                 result.push(
                     <li key={i} className="list-group-item">

@@ -21,15 +21,17 @@ class Reader extends Component {
 
     render() {
         window.scrollTo(0, 0);
-        let manga = localStorage.getItem("manga");
-        let mangaName = localStorage.getItem("mangaName");
-        manga = JSON.parse(manga);
         let result = [];
         let chapterSelect = [];
         let { redirect, toPage } = this.state;
         let { id, chapter } = this.props.match.params;
-        chapter = parseInt(chapter,10);
-        
+        let { mangas } = this.props;
+        let manga = mangas.filter(e=> {
+            return e._id === id;
+        })
+        let mangaName = manga.name;
+        manga = manga[0].chapter;
+        chapter = parseInt(chapter, 10);
         if (redirect) {
             this.setState({
                 redirect: false,

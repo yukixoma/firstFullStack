@@ -59,23 +59,6 @@ app.get("/fetchMangaList", (req, res) => {
     })
 })
 
-
-app.post("/fetchUserUploadedManga", (req, res) => {
-    var username = req.body.username;
-    var password = req.body.password;
-    userModel.login(username, password, (data, err) => {
-        if (data === "Login success") {
-            manga.find({ username: username }, (err, result) => {
-                if (err) throw err;
-                res.send(result);
-            })
-        } else {
-            res.send("Authentication error");
-        }
-    })
-})
-
-
 //Handle new manga request
 app.post("/new", upload.single("file"), (req, res) => {
     var username = req.body.username;

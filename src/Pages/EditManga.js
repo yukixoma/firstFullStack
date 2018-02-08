@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
 import { Redirect, Link } from 'react-router-dom';
-import { connect } from 'react-redux';
-import { actFetchUserUploadedManga } from './../actions/index';
 import paginate from '../paginate';
 
 class EditManga extends Component {
@@ -11,6 +9,7 @@ class EditManga extends Component {
             page: 1,
             itemPerPage: 5,
             msg: "",
+            mangas: []
         }
     }
 
@@ -18,7 +17,10 @@ class EditManga extends Component {
         let username = localStorage.getItem("username");
         let password = localStorage.getItem("password");
         if (username && password) {
-            this.props.getUserUploadedManga(username);
+            let mangas = this.props.mangas.filter(e => {
+                return e.username === username;
+            });
+            this.setState({ mangas })
         }
         else {
             alert("Please log in");
@@ -50,9 +52,9 @@ class EditManga extends Component {
 
     onPaginate = e => {
         e.preventDefault();
-        let { page, itemPerPage } = this.state;
+        let { page, itemPerPage, mangas } = this.state;
         let { value } = e.target;
-        let mangas = this.props.mangaUploadedByUser;
+
         if (value === "+" && (page - 1) * itemPerPage < mangas.length - 1) {
             this.setState({
                 page: page + 1
@@ -70,9 +72,8 @@ class EditManga extends Component {
     }
 
     render() {
-        let { msg, page, itemPerPage } = this.state;
-        let mangas = this.props.mangaUploadedByUser;
-        let paginated = paginate(mangas,itemPerPage,page,1);
+        let { msg, page, itemPerPage, mangas } = this.state;
+        let paginated = paginate(mangas, itemPerPage, page, 1);
         let alert = "alert";
         let result = [];
         for (let i = 0; i < paginated.length; i++) {
@@ -137,18 +138,4 @@ class EditManga extends Component {
     }
 }
 
-const mapStateToProps = state => {
-    return {
-        mangaUploadedByUser: state.Manga
-    }
-}
-
-const mapDispatchToProps = (dispacth, props) => {
-    return {
-        getUserUploadedManga: username => {
-            dispacth(actFetchUserUploadedManga(username));
-        }
-    }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(EditManga);
+export default EditManga;
