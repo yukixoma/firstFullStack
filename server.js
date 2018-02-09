@@ -127,6 +127,7 @@ app.post("/editMangaInfo", upload.single("file"), (req, res) => {
                 imgurUpload.single(req.file.path, (link, err) => {
                     if (err) res.writeHead(500, "Internal Error");
                     if (link) {
+                        console.log(link);
                         cover = link;
                         update(id, name, subName, cover, author, group, genre, description, status);
                         res.send("Manga info updated");

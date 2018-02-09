@@ -54,9 +54,14 @@ var imgurMultiFileUpload = (files, id, option, callback) => {
 
 var imgurSingleFileUpload = (file, callback) => {
     imgur.uploadFile(file)
-        .then(res => { callback(res.data.link, null); })
-        .catch(err => { callback(null, err); });
-    fs.unlink(file);
+        .then(json => { 
+            callback(json.data.link, null);
+            fs.unlink(file); 
+        })
+        .catch(err => { 
+            callback(null, err); 
+            fs.unlink(file);
+        });
 }
 
 
