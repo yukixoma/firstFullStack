@@ -16,6 +16,8 @@ var FlickrOptions = {
     access_token_secret: "6379fcc380397f98",
 }
 
+var api_key = "38ebc1d666f2689fddcb2ba5207d4f4c";
+
 var imgurMultiFileUpload = (files, id, option, callback) => {
     var i = 0;
     var j = 0;
@@ -31,7 +33,6 @@ var imgurMultiFileUpload = (files, id, option, callback) => {
             photo: e
         })
     });
-    console.log(photos);
 
     Flickr.authenticate(FlickrOptions, function (error, flickr) {
         var uploadOptions = {
@@ -44,52 +45,46 @@ var imgurMultiFileUpload = (files, id, option, callback) => {
             }
             flickrId = result;
             console.log(flickrId);
-            continueUpload();
+            continueUpload(flickr);
         });
     });
 
-    var continueUpload = () => {
+    var continueUpload = flickr => {
         manga.findOne({ _id: id }, (err, data) => {
             if (err) callback(null, "ID not found");
             if (data) {
                 newChapter = data.chapter;
                 if (!option) newChapter.push([[], [], []]);
-                flickrMulti();
+                flickrMulti(flickr);
             }
         })
     }
-    var flickrMulti = () => {
+    var flickrMulti = flickr => {
         var length = newChapter.length;
         if (x < flickrId.length) {
-            var photoID = flickrId[x];
-            var endPoint = "https://api.flickr.com/services/rest/?method=flickr.photos.getSizes"
-                + "&api_key=67c0c30c61ac9292bb6061da34d3fbfe"
-                + "&photo_id="
-                + photoID
-                + "&format=json&nojsoncallback=1";
-            axios({
-                method: "GET",
-                url: endPoint,
-                data: null
-            }).then(res => {
-                var data = res.data.sizes.size;
-                var original = data.filter(e => {
-                    return e.label === "Original";
-                })
-                newChapter[length - 1][1].push(original[0].source);
-                callback("file " + x + "is uploaded to Flickr database", null);
+            flickr.photos.getSizes({ api_key: api_key, photo_id: flickrId[x] }, (err, res) => {
                 x += 1;
-                flickrMulti();
-            }).catch(err => {
-                callback(null, "file " + x + "in Flickr is failed");
-                error.push("file " + x + " in Flickr is failed");
-                x += 1;
-                flickrMulti();
-            });
+                if (err) {
+                    callback(null, "file " + x + " in Flickr is failed");
+                    error.push("file " + x + " in Flickr is failed");
+                }
+                if (res) {
+                    var data = res.sizes.size;
+                    var original = data.filter(e => {
+                        return e.label === "Original";
+                    })
+                    newChapter[length - 1][1].push(original[0].source);
+                    callback("file " + x + " is uploaded to Flickr database", null);
+                }
+                flickrMulti(flickr);
+            })
         }
         if (x === flickrId.length) {
-            console.log("Upload to flickr is done");
-            imgurMulti();
+            if (error.length !== 0) callback(null, error);
+            if (error.length === 0) {
+                callback("Upload to Flickr is done", null);
+                imgurMulti();
+            }
         }
     }
 
@@ -110,8 +105,8 @@ var imgurMultiFileUpload = (files, id, option, callback) => {
                 .catch(err => {
                     fs.unlink(files[i]);
                     i += 1;
-                    callback(null, "file " + i + "in imgur is failed");
-                    error.push("file " + i + "in imgur is failed");
+                    callback(null, "file " + i + " in imgur is failed");
+                    error.push("file " + i + " in imgur is failed");
                     imgurMulti();
                 });
         }
