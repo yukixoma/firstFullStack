@@ -6,28 +6,37 @@ class Reader extends Component {
         super(props)
         this.state = {
             redirect: false,
-            toPage: 0
+            toPage: 0,
+            server: 0,
         }
     }
 
-    onChange = (e) => {
+    onChange = e => {
         let toPage = e.target.value;
         toPage = parseInt(toPage, 10);
         this.setState({
             redirect: true,
-            toPage
+            toPage,
+            server: 0
         })
+    }
+
+    onChangeServer = e => {
+        let { value } = e.target;
+        value = parseInt(value, 10);
+        this.setState({ server: value })
     }
 
     render() {
         window.scrollTo(0, 0);
         let result = [];
         let chapterSelect = [];
-        let { redirect, toPage } = this.state;
+        let serverSelect = [];
+        let { redirect, toPage, server } = this.state;
         let { id, chapter } = this.props.match.params;
         let allManga = localStorage.getItem("allManga");
         allManga = JSON.parse(allManga);
-        let manga = allManga.filter(e=> {
+        let manga = allManga.filter(e => {
             return e._id === id;
         })
         let mangaName = manga[0].name;
@@ -43,16 +52,29 @@ class Reader extends Component {
 
         let next = chapter + 1 === manga.length ? manga.length - 1 : chapter + 1;
         let previous = chapter - 1 < 0 ? 0 : chapter - 1;
+
+
         for (let i = 0; i < manga[chapter][0].length; i++) {
             result.push(
                 <div className="card-block">
-                    <img key={i} className="img-fluid img-center" src={manga[chapter][0][i]} />
+                    <img key={i} className="img-fluid img-center" src={manga[chapter][server][i]} />
                 </div>
             )
         }
         for (let i = 0; i < manga.length; i++) {
             chapterSelect.push(
                 <option key={i} value={i}> Chapter {i + 1} </option>
+            )
+        }
+
+        let serverAvailable = 0;
+        manga[chapter].forEach(e => {
+            if (e.length !== 0) serverAvailable += 1;
+        });
+
+        for (let i = 0; i < serverAvailable; i++) {
+            serverSelect.push(
+                <option key={i} value={i}> Server {i + 1} </option>
             )
         }
         return (
@@ -63,11 +85,14 @@ class Reader extends Component {
                     </h1>
                     <Link to={"/read/" + id + "/" + previous} exact="true">
                         <button type="button" class="btn btn-danger mr-sm-5">
-                            Pre
+                            Prev
                         </button>
                     </Link>
                     <select class="custom-select mr-sm-5" value={chapter} onChange={this.onChange}>
                         {chapterSelect}
+                    </select>
+                    <select class="custom-select mr-sm-5" value={server} onChange={this.onChangeServer}>
+                        {serverSelect}
                     </select>
                     <Link to={"/read/" + id + "/" + next} exact="true">
                         <button type="button" class="btn btn-success mr-sm-5">
@@ -79,7 +104,7 @@ class Reader extends Component {
                 <div className="container text-center" style={{ paddingBottom: 50 }}>
                     <Link to={"/read/" + id + "/" + previous} exact="true">
                         <button type="button" class="btn btn-danger mr-sm-5">
-                            Pre
+                            Prev
                         </button>
                     </Link>
                     <select class="custom-select mr-sm-5" value={chapter} onChange={this.onChange}>

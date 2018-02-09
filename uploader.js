@@ -2,24 +2,98 @@ var fs = require("fs");
 var imgur = require("imgur");
 var mongoose = require("mongoose");
 var manga = require("./models/manga");
+var axios = require("axios");
 var clientID = ["cdfc0eef74ecfc9", "7f3eb97b787812d", "3e18908bb8d5a8f", "c08857d7784f570", "ec75d3f43886523", "360ec78c61b2d44"];
 mongoose.connect("mongodb://yukixoma:123456789@ds046357.mlab.com:46357/manga");
 
+var Flickr = require("flickrapi");
 
+var FlickrOptions = {
+    api_key: "38ebc1d666f2689fddcb2ba5207d4f4c",
+    secret: "3da187d71147c1d6",
+    user_id: "156158483@N06",
+    access_token: "72157690262162532-08bb08678eea7160",
+    access_token_secret: "6379fcc380397f98",
+}
 
 var imgurMultiFileUpload = (files, id, option, callback) => {
     var i = 0;
     var j = 0;
+    var x = 0;
+    var newChapter = [];
     var error = [];
-    manga.findOne({ _id: id }, (err, data) => {
-        if (err) callback(null, "ID not found");
-        if (data) {
-            var newChapter = data.chapter;
-            if (!option) newChapter.push([[], [], []]);
-            uploadMulti(newChapter);
+    var photos = [];
+    var flickrId = [];
+    files.forEach(e => {
+        photos.push({
+            title: "test",
+            tags: ["test"],
+            photo: e
+        })
+    });
+    console.log(photos);
+
+    Flickr.authenticate(FlickrOptions, function (error, flickr) {
+        var uploadOptions = {
+            photos: photos
+        };
+
+        Flickr.upload(uploadOptions, FlickrOptions, function (err, result) {
+            if (err) {
+                return console.error(error);
+            }
+            flickrId = result;
+            console.log(flickrId);
+            continueUpload();
+        });
+    });
+
+    var continueUpload = () => {
+        manga.findOne({ _id: id }, (err, data) => {
+            if (err) callback(null, "ID not found");
+            if (data) {
+                newChapter = data.chapter;
+                if (!option) newChapter.push([[], [], []]);
+                flickrMulti();
+            }
+        })
+    }
+    var flickrMulti = () => {
+        var length = newChapter.length;
+        if (x < flickrId.length) {
+            var photoID = flickrId[x];
+            var endPoint = "https://api.flickr.com/services/rest/?method=flickr.photos.getSizes"
+                + "&api_key=67c0c30c61ac9292bb6061da34d3fbfe"
+                + "&photo_id="
+                + photoID
+                + "&format=json&nojsoncallback=1";
+            axios({
+                method: "GET",
+                url: endPoint,
+                data: null
+            }).then(res => {
+                var data = res.data.sizes.size;
+                var original = data.filter(e => {
+                    return e.label === "Original";
+                })
+                newChapter[length - 1][1].push(original[0].source);
+                callback("file " + x + "is uploaded to Flickr database", null);
+                x += 1;
+                flickrMulti();
+            }).catch(err => {
+                callback(null, "file " + x + "in Flickr is failed");
+                error.push("file " + x + " in Flickr is failed");
+                x += 1;
+                flickrMulti();
+            });
         }
-    })
-    var uploadMulti = (newChapter) => {
+        if (x === flickrId.length) {
+            console.log("Upload to flickr is done");
+            imgurMulti();
+        }
+    }
+
+    var imgurMulti = () => {
         if (j > 5) j = 0;
         imgur.setClientId(clientID[j]);
         j += 1;
@@ -30,15 +104,15 @@ var imgurMultiFileUpload = (files, id, option, callback) => {
                     newChapter[length - 1][0].push(json.data.link);
                     fs.unlink(files[i])
                     i += 1;
-                    callback("file " + i + " is uploaded", null);
-                    uploadMulti(newChapter);
+                    callback("file " + i + "is uploaded to imgur", null);
+                    imgurMulti();
                 })
                 .catch(err => {
                     fs.unlink(files[i]);
                     i += 1;
-                    callback(null, "file " + i + " is failed");
-                    error.push("files " + i + " is failed");
-                    uploadMulti(newChapter);
+                    callback(null, "file " + i + "in imgur is failed");
+                    error.push("file " + i + "in imgur is failed");
+                    imgurMulti();
                 });
         }
         if (i === files.length) {
@@ -46,7 +120,6 @@ var imgurMultiFileUpload = (files, id, option, callback) => {
                 if (err) callback(null, "Database error");
                 if (error.length !== 0) callback(null, error);
                 if (error.length === 0) callback("All green", null);
-
             })
         }
     }
@@ -54,12 +127,12 @@ var imgurMultiFileUpload = (files, id, option, callback) => {
 
 var imgurSingleFileUpload = (file, callback) => {
     imgur.uploadFile(file)
-        .then(json => { 
+        .then(json => {
             callback(json.data.link, null);
-            fs.unlink(file); 
+            fs.unlink(file);
         })
-        .catch(err => { 
-            callback(null, err); 
+        .catch(err => {
+            callback(null, err);
             fs.unlink(file);
         });
 }
