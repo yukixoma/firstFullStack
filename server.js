@@ -17,7 +17,7 @@ var upload = multer({ dest: 'tmp/' });
 
 
 //Connect to Uploader
-var imgurUpload = require("./uploader");
+var imgUploader = require("./uploader");
 
 
 //body parser parse form data
@@ -66,22 +66,15 @@ app.get("/fetchMangaList", (req, res) => {
 
 //Handle new manga request
 app.post("/new", upload.single("file"), (req, res) => {
-    var username = req.body.username;
-    var password = req.body.password;
+    let { username, password } = req.body;
     userModel.login(username, password, (data, err) => {
         if (err) res.writeHead(500, err);
         if (data) {
-            imgurUpload.single(req.file.path, (link, err) => {
+            imgUploader.single(req.file.path, (link, err) => {
                 if (data) {
-                    var name = req.body.name;
-                    var subName = req.body.subName;
+                    let { name, subName, author, group, description, status } = req.body;
                     var cover = link;
-                    var author = req.body.author;
-                    var group = req.body.group;
                     var genre = req.body.genre.split(", ");
-                    var description = req.body.description;
-                    var status = req.body.status;
-
                     var newManga = new manga({
                         name: name,
                         subName: subName,
@@ -109,22 +102,14 @@ app.post("/new", upload.single("file"), (req, res) => {
 
 //Handle Edit manga info request 
 app.post("/editMangaInfo", upload.single("file"), (req, res) => {
-    var username = req.body.username;
-    var password = req.body.password;
-    var id = req.body.id;
-    var name = req.body.name;
-    var subName = req.body.subName;
+    let { username, password, id, name, subName, author, group, description, status } = req.body;
     var cover = "";
-    var author = req.body.author;
-    var group = req.body.group;
-    var genre = req.body.genre.split(", ");
-    var description = req.body.description;
-    var status = req.body.status;
+    let genre = req.body.genre.split(", ");
     userModel.login(username, password, (data, err) => {
         if (err) res.writeHead(500, err);
         if (data) {
             if (req.file) {
-                imgurUpload.single(req.file.path, (link, err) => {
+                imgUploader.single(req.file.path, (link, err) => {
                     if (err) res.writeHead(500, "Internal Error");
                     if (link) {
                         console.log(link);
@@ -180,7 +165,7 @@ app.post("/chap/new/:id", upload.array("files"), (req, res) => {
                 files.push(file.path);
             })
             var id = req.params.id;
-            imgurUpload.multiFile(files, id, null, (data, err) => {
+            imgUploader.multiFile(files, id, null, (data, err) => {
                 if (err) console.log(err);
                 if (data) console.log(data);
             })
@@ -194,18 +179,37 @@ app.post("/chap/new/:id", upload.array("files"), (req, res) => {
 
 
 app.post("/chapter/add/:id/:chapter", upload.array("files"), (req, res) => {
-    var id = req.params.id;
-    var chapter = req.params.chapter;
+    let { chapter, id } = req.params;
+    var imgIndex = req.body.imgIndex;
     res.send("Ok");
     var files = [];
     req.files.map((file, index) => {
         files.push(file.path);
     })
-    imgurUpload.multiFile(files, id, "add", (data, err) => {
+    var newChapter = [];
+    manga.findOne({ _id: id }, (err, data) => {
         if (err) console.log(err);
-        if (data) console.log(data);
+        if (data) {
+            newChapter = data.chapter;
+        }
     })
-
+    if (imgIndex) {
+        imgUploader.single(files[0], (link, err) => {
+            if (err) console.log(err);
+            if (link) {
+                console.log(link);
+                newChapter[chapter][0].splice(imgIndex, 0, link);
+                manga.findOneAndUpdate({ _id: id }, { $set: { chapter: newChapter } }, { new: true }, (err, doc, data) => {
+                    if (err) console.log(err);
+                })
+            }
+        })
+    } else {
+        imgUploader.multiFile(files, id, chapter, (data, err) => {
+            if (err) console.log(err);
+            if (data) console.log(data);
+        })
+    }
 })
 
 

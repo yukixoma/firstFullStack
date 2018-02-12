@@ -95,3 +95,12 @@ body {
     right: 0 !important;
     z-index: 999 !important;
 }
+
+.add-img {
+    border: 3px #5cb85c dashed !important;
+}
+
+.fix-position {
+    position: fixed;
+    top: 223px;
+}
