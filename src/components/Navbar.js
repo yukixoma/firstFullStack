@@ -8,12 +8,14 @@ class Navbar extends Component {
         super(props);
         this.state = {
             ASCCIIonlyList: [],
+            mangas: [],
             searchResult: []
         }
     }
 
     componentWillMount() {
-        let { mangas } = this.props;
+        let allManga = localStorage.getItem("allManga");
+        let mangas = JSON.parse(allManga);        
         let ASCCIIonlyList = [];
         mangas.forEach(element => {
             ASCCIIonlyList.push({
@@ -21,13 +23,13 @@ class Navbar extends Component {
             })
         });
         this.setState({
-            ASCCIIonlyList
+            ASCCIIonlyList,
+            mangas
         })
     }
 
     onChange = (e) => {
-        let { ASCCIIonlyList } = this.state;
-        let { mangas } = this.props;
+        let { ASCCIIonlyList, mangas } = this.state;
         let { value } = e.target;
         if (value.length > 2) {
             value = replaceNonASCII(value);
