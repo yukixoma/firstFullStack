@@ -155,26 +155,32 @@ app.post("/editMangaInfo", upload.single("file"), (req, res) => {
 
 //Handle new chapter request
 app.post("/chap/new/:id", upload.array("files"), (req, res) => {
-    var username = req.body.username;
-    var password = req.body.password;
+    let { username, password, href } = req.body;
+    let { id } = req.params;
     userModel.login(username, password, (data, err) => {
         if (data) {
             res.send("Server recieved files");
-            var files = [];
-            req.files.map((file, index) => {
-                files.push(file.path);
-            })
-            var id = req.params.id;
-            imgUploader.multiFile(files, id, null, (data, err) => {
-                if (err) console.log(err);
-                if (data) console.log(data);
-            })
+            if (href) {
+                imgUploader.blogger(href, id, (res, err) => {
+                    if (err) console.log(err);
+                    else console.log(res);
+                })
+            } else {
+                var files = [];
+                req.files.map((file, index) => {
+                    files.push(file.path);
+                })
+                imgUploader.multiFile(files, id, null, (data, err) => {
+                    if (err) console.log(err);
+                    if (data) console.log(data);
+                })
+            }
         }
         else {
             res.writeHead(401, err);
+            req.files.forEach(e => fs.unlink(e.path));
         }
     })
-
 })
 
 

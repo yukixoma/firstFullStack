@@ -95,6 +95,11 @@ var imgurMultiFileUpload = (files, id, chapter, callback) => {
                 callback("Upload to Flickr is done", null);
                 imgurMulti();
             }
+            manga.findOneAndUpdate({ _id: id }, { $set: { chapter: newChapter } }, { new: true }, (err, doc, data) => {
+                if (err) callback(null, "Database error");
+                if (error.length !== 0) callback(null, error);
+                if (error.length === 0) callback("Flickr is done!", null);
+            })
         }
     }
 
@@ -106,13 +111,17 @@ var imgurMultiFileUpload = (files, id, chapter, callback) => {
             imgur.uploadFile(files[i])
                 .then(json => {
                     newChapter[position][0].push(json.data.link);
-                    fs.unlink(files[i], err => callback(null, "error unlink file"));
+                    fs.unlink(files[i], err => {
+                        if (err) callback(null, "error unlink file");
+                    });
                     i += 1;
-                    callback("file " + i + "is uploaded to imgur", null);
+                    callback("file " + i + " is uploaded to imgur", null);
                     imgurMulti();
                 })
                 .catch(err => {
-                    fs.unlink(files[i], err => callback(null, "error unlink file"));
+                    fs.unlink(files[i], err => {
+                        if (err) callback(null, "error unlink file");
+                    });
                     i += 1;
                     callback(null, "file " + i + " in imgur is failed");
                     error.push("file " + i + " in imgur is failed");
@@ -141,6 +150,20 @@ var imgurSingleFileUpload = (file, callback) => {
         });
 }
 
+var blogger = (href, id, callback) => {
+    manga.findOne({ _id: id }, (err, data) => {
+        if (err) callback(null, "ID not found");
+        if (data) {
+            newChapter = data.chapter;
+            newChapter.push([[], [], href]);
+            manga.findOneAndUpdate({ _id: id }, { $set: { chapter: newChapter } }, { new: true }, (err, doc, data) => {
+                if (err) callback(null, "Database error");
+                else callback("Blogger import all green", null);
+            })
+        }
+    })
+}
 
 module.exports.multiFile = imgurMultiFileUpload;
 module.exports.single = imgurSingleFileUpload;
+module.exports.blogger = blogger;

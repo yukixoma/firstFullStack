@@ -5,8 +5,6 @@ class Reader extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            redirect: false,
-            toPage: 0,
             server: 0,
         }
     }
@@ -14,11 +12,8 @@ class Reader extends Component {
     onChange = e => {
         let toPage = e.target.value;
         toPage = parseInt(toPage, 10);
-        this.setState({
-            redirect: true,
-            toPage,
-            server: 0
-        })
+        let { id } = this.props.match.params;
+        window.location.replace("/read/" + id + "/" + toPage)
     }
 
     onChangeServer = e => {
@@ -32,7 +27,7 @@ class Reader extends Component {
         let result = [];
         let chapterSelect = [];
         let serverSelect = [];
-        let { redirect, toPage, server } = this.state;
+        let { server } = this.state;
         let { id, chapter } = this.props.match.params;
         let allManga = localStorage.getItem("allManga");
         allManga = JSON.parse(allManga);
@@ -42,19 +37,19 @@ class Reader extends Component {
         let mangaName = manga[0].name;
         manga = manga[0].chapter;
         chapter = parseInt(chapter, 10);
-        if (redirect) {
-            this.setState({
-                redirect: false,
-                toPage: 0
-            })
-            return <Redirect to={"/read/" + id + "/" + toPage} />
-        }
 
         let next = chapter + 1 === manga.length ? manga.length - 1 : chapter + 1;
         let previous = chapter - 1 < 0 ? 0 : chapter - 1;
 
 
-        for (let i = 0; i < manga[chapter][0].length; i++) {
+
+        if (manga[chapter][server].length === 0) {
+            manga[chapter].map((e, index) => {
+                if (e.length !== 0) server = index;
+            })
+        }
+
+        for (let i = 0; i < manga[chapter][server].length; i++) {
             result.push(
                 <div className="card-block">
                     <img key={i} className="img-fluid img-center" src={manga[chapter][server][i]} />
@@ -67,14 +62,9 @@ class Reader extends Component {
             )
         }
 
-        let serverAvailable = 0;
-        manga[chapter].forEach(e => {
-            if (e.length !== 0) serverAvailable += 1;
-        });
-
-        for (let i = 0; i < serverAvailable; i++) {
+        for (let i = 0; i < manga[chapter].length; i++) {
             serverSelect.push(
-                <option key={i} value={i}> Server {i + 1} </option>
+                <option key={i} value={i}> Server {i + 1}  </option>
             )
         }
         return (
