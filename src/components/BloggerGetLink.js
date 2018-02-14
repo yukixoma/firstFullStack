@@ -37,16 +37,25 @@ class BloggerGetLink extends Component {
 
     onUpload = e => {
         e.preventDefault();
-        let { id } = this.props;
+        let { id, chapterIndex } = this.props;
         let { href } = this.state;
         let username = localStorage.getItem("username");
         let password = localStorage.getItem("password");
-        let endPoint = "/chap/new/" + id;
-        let data = { username, password, href };
-        apiCaller("POST", endPoint, data, (res, err) => {
-            if (err) this.props.onReceiveUploadMsg(err);
-            if (res) this.props.onReceiveUploadMsg(res.data);
-        })
+        if (chapterIndex !== undefined) {
+            let data = { username, password, href };
+            let endPoint = "/chapter/add/" + id + "/" + chapterIndex;
+            apiCaller("POST", endPoint, data, (res, err) => {
+                if (err) throw err;
+                console.log(res.data);
+            })
+        } else {
+            let data = { username, password, href };
+            let endPoint = "/chap/new/" + id;
+            apiCaller("POST", endPoint, data, (res, err) => {
+                if (err) this.props.onReceiveUploadMsg(err);
+                if (res) this.props.onReceiveUploadMsg(res.data);
+            })
+        }
     }
 
     onChange = e => {
@@ -59,7 +68,7 @@ class BloggerGetLink extends Component {
     render() {
         return (
             <div className="card">
-                <h3 class="card-header" style={{ backgroundColor: "#428bca", color: "white" }}>Single Uploader</h3>
+                <h3 class="card-header" style={{ backgroundColor: "#428bca", color: "white" }}> Blogger Importer </h3>
                 <div className="card-block" >
                     <form id="form" encType="multipart/formdata" onSubmit={this.onGetlink} onChange={this.onChange}>
                         <div className="row">

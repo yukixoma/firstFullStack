@@ -1,16 +1,19 @@
 import React, { Component } from 'react';
 import EditChapterPreview from '../components/EditChapterPreview';
 import apiCaller from './../apiCaller';
+import AddImage from '../components/AddImage';
+import BloggerGetLink from '../components/BloggerGetLink';
 
 class EditChapter extends Component {
     constructor(props) {
         super(props);
         this.state = {
             chapterIndex: 0,
-            function: "",
+            mode: "addImage",
             manga: {},
             id: "",
             preViewUrl: [],
+            bloggerUrl: [],
             imgIndex: 0,
             singlePreviewUrl: "",
         }
@@ -37,63 +40,33 @@ class EditChapter extends Component {
         }
     }
 
-    onChangeAddImage = e => {
-        let preViewUrl = [];
-        let { files } = e.target;
-        let length = files.length;
-        for (let i = 0; i < length; i++) {
-            preViewUrl.push(URL.createObjectURL(files[i]))
-        }
-        this.setState({ preViewUrl });
-    }
-
-    onAddImage = e => {
-        e.preventDefault();
-        console.log("click");
-        let { id, chapterIndex } = this.state;
-        let form = document.getElementById("form");
-        let formData = new FormData(form);
-        let endPoint = "/chapter/add/" + id + "/" + chapterIndex;
-        apiCaller("POST", endPoint, formData, (res, err) => {
-            if (err) throw err;
-            console.log(res.data);
+    onReceiveImgLink = (url, position) => {
+        if (position === null) this.setState({
+            preViewUrl: url,
+            imgIndex: position
+        });
+        else this.setState({
+            singlePreviewUrl: url,
+            imgIndex: position
         })
     }
 
-    onClick = e => {
-        e.preventDefault();
-        let { imgIndex } = this.state;
+    onChangeMode = e => {
         let { value } = e.target;
-        if (value === "+") imgIndex += 1;
-        else imgIndex -= 1;
-        if (imgIndex < 0) imgIndex = 0;
         this.setState({
-            imgIndex
+            mode: value,
+            bloggerUrl: [],
+            preViewUrl: [],
+            singlePreviewUrl: "",
         })
     }
 
-    onChangeImg = e => {
-        let files = e.target.files[0];
-        let singlePreviewUrl = files ? URL.createObjectURL(files) : "";
-        this.setState({
-            singlePreviewUrl
-        })
-    }
-
-    onAddImageToPosition = e => {
-        e.preventDefault();
-        let { id, chapterIndex } = this.state;
-        let form = document.getElementById("form-1");
-        let formData = new FormData(form);
-        let endPoint = "/chapter/add/" + id + "/" + chapterIndex;
-        apiCaller("POST", endPoint, formData, (res, err) => {
-            if (err) throw err;
-            console.log(res.data);
-        })
+    onReceiveBloggerUrl = href => {
+        this.setState({ bloggerUrl: href });
     }
 
     render() {
-        let { manga, chapterIndex, preViewUrl, singlePreviewUrl, imgIndex } = this.state;
+        let { manga, chapterIndex, preViewUrl, singlePreviewUrl, imgIndex, id, mode, bloggerUrl } = this.state;
         let chapter = manga.chapter[chapterIndex];
         let result = manga.chapter.map((chap, index) => {
             return (
@@ -102,6 +75,28 @@ class EditChapter extends Component {
                 </option>
             )
         })
+        let editMode = () => {
+            switch (mode) {
+                case "addImage":
+                    return (<AddImage
+                        id={id}
+                        chapterIndex={chapterIndex}
+                        onReceiveImgLink={this.onReceiveImgLink}
+                    />)
+                case "bloggerImport":
+                    return (<BloggerGetLink
+                        id={id}
+                        chapterIndex={chapterIndex}
+                        onReceivepreViewUrl={this.onReceiveBloggerUrl}
+                    />)
+                default:
+                    return (<AddImage
+                        id={id}
+                        chapterIndex={chapterIndex}
+                        onReceiveImgLink={this.onReceiveImgLink}
+                    />);
+            }
+        }
         return (
             <div className="container" style={{ marginTop: 50 }}>
                 <div className="row">
@@ -116,38 +111,17 @@ class EditChapter extends Component {
                                             {result}
                                         </select>
                                         <label> Select Mode &nbsp; </label>
-                                        <select className="form-control" name="selectFunction">
-                                            <option> Add image </option>
-                                            <option> Re-arrange </option>
-                                            <option> Re-up </option>
+                                        <select className="form-control" value={mode} name="selectMode" onChange={this.onChangeMode}>
+                                            <option value="addImage"> Add image </option>
+                                            <option value="reArrange"> Re-arrange </option>
+                                            <option value="reUp"> Re-up </option>
+                                            <option value="bloggerImport"> Blogger Import </option>
                                         </select>
                                     </form>
                                 </div>
                             </div>
-                            <div className="card">
-                                <div className="card-block">
-                                    <label> Add to bottom </label>
-                                    <form id="form" className="form-inline" encType="multipart/form-data"
-                                        onChange={this.onChangeAddImage}
-                                        onSubmit={this.onAddImage}
-                                    >
-                                        <input className="form-control-file" type="file" name="files" multiple required />
-                                        <button type="submit" class="btn btn-primary">Upload</button>
-                                    </form>
-                                    <br />
-                                    <label> Add to specific position {imgIndex} </label>
-                                    <form id="form-1" className="form-inline" encType="multipart/form-data"
-                                        onChange={this.onChangeImg}
-                                        onSubmit={this.onAddImageToPosition}
-                                    >
-                                        <input value={imgIndex} name="imgIndex" style={{ display: "none" }} />
-                                        <input className="form-control-file" type="file" name="files" required />
-                                        <button type="button" value="-" class="btn btn-danger" onClick={this.onClick}> - </button>
-                                        <button type="button" value="+" class="btn btn-success" onClick={this.onClick}> + </button>
-                                        <button type="submit" class="btn btn-primary">Upload</button>
-                                    </form>
-                                </div>
-                            </div>
+                            <br />
+                            {editMode()}
                         </div>
                     </div>
                     <div className="col-lg-6">
@@ -156,6 +130,7 @@ class EditChapter extends Component {
                             preViewUrl={preViewUrl}
                             singlePreviewUrl={singlePreviewUrl}
                             imgIndex={imgIndex}
+                            bloggerUrl={bloggerUrl}
                         />
                     </div>
                 </div>

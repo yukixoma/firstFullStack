@@ -161,7 +161,7 @@ app.post("/chap/new/:id", upload.array("files"), (req, res) => {
         if (data) {
             res.send("Server recieved files");
             if (href) {
-                imgUploader.blogger(href, id, (res, err) => {
+                imgUploader.blogger(href, id, null, (res, err) => {
                     if (err) console.log(err);
                     else console.log(res);
                 })
@@ -183,15 +183,17 @@ app.post("/chap/new/:id", upload.array("files"), (req, res) => {
     })
 })
 
-
+//Handle add Img to chapter request
 app.post("/chapter/add/:id/:chapter", upload.array("files"), (req, res) => {
     let { chapter, id } = req.params;
-    var imgIndex = req.body.imgIndex;
-    res.send("Ok");
+    var { imgIndex, href } = req.body;
+    res.send("Chapter is edited");
     var files = [];
-    req.files.map((file, index) => {
-        files.push(file.path);
-    })
+    if (req.files) {
+        req.files.map((file, index) => {
+            files.push(file.path);
+        })
+    }
     var newChapter = [];
     manga.findOne({ _id: id }, (err, data) => {
         if (err) console.log(err);
@@ -203,12 +205,16 @@ app.post("/chapter/add/:id/:chapter", upload.array("files"), (req, res) => {
         imgUploader.single(files[0], (link, err) => {
             if (err) console.log(err);
             if (link) {
-                console.log(link);
                 newChapter[chapter][0].splice(imgIndex, 0, link);
                 manga.findOneAndUpdate({ _id: id }, { $set: { chapter: newChapter } }, { new: true }, (err, doc, data) => {
                     if (err) console.log(err);
                 })
             }
+        })
+    } else if (href) {
+        imgUploader.blogger(href, id, chapter, (data, err) => {
+            if (err) console.log(err);
+            if (data) console.log(data);
         })
     } else {
         imgUploader.multiFile(files, id, chapter, (data, err) => {
@@ -216,6 +222,7 @@ app.post("/chapter/add/:id/:chapter", upload.array("files"), (req, res) => {
             if (data) console.log(data);
         })
     }
+
 })
 
 

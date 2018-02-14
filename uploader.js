@@ -150,12 +150,22 @@ var imgurSingleFileUpload = (file, callback) => {
         });
 }
 
-var blogger = (href, id, callback) => {
+
+//Import link from blogger
+var blogger = (href, id, position, callback) => {
     manga.findOne({ _id: id }, (err, data) => {
         if (err) callback(null, "ID not found");
-        if (data) {
+        if (data && position === null) {
             newChapter = data.chapter;
             newChapter.push([[], [], href]);
+            manga.findOneAndUpdate({ _id: id }, { $set: { chapter: newChapter } }, { new: true }, (err, doc, data) => {
+                if (err) callback(null, "Database error");
+                else callback("Blogger import all green", null);
+            })
+        }
+        if (data && position !== null) {
+            newChapter = data.chapter;
+            newChapter[position][2] = href;
             manga.findOneAndUpdate({ _id: id }, { $set: { chapter: newChapter } }, { new: true }, (err, doc, data) => {
                 if (err) callback(null, "Database error");
                 else callback("Blogger import all green", null);

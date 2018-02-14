@@ -8,7 +8,7 @@ class EditChapterPreview extends Component {
         }
     }
     componentWillMount() {
-        let {chapter} = this.props;
+        let { chapter } = this.props;
         let length = chapter[0].length;
         this.setState({
             length
@@ -16,7 +16,7 @@ class EditChapterPreview extends Component {
     }
 
     render() {
-        let { chapter, preViewUrl, singlePreviewUrl, imgIndex } = this.props;
+        let { chapter, preViewUrl, singlePreviewUrl, imgIndex, bloggerUrl } = this.props;
         let { length } = this.state;
         let result = chapter[0].map((img, index) => {
             return (
@@ -28,13 +28,15 @@ class EditChapterPreview extends Component {
         if (preViewUrl.length > 0) {
             preViewUrl.forEach(e => {
                 result.push(
-                    <div className="card">
-                        <img className="img-fluid" src={e} />
+                    <div className="card add-img">
+                        <div className="card-block">
+                            <img className="img-fluid" src={e} />
+                        </div>
                     </div>
                 )
             });
         }
-        if (singlePreviewUrl) {            
+        if (singlePreviewUrl !== "") {
             result.splice(imgIndex, 0,
                 <div className="card add-img">
                     <div className="card-block">
@@ -43,8 +45,16 @@ class EditChapterPreview extends Component {
                 </div>
             )
         }
-        if (!singlePreviewUrl && result.length !== length) {
-            result.splice(imgIndex, 1);
+
+        if (bloggerUrl.length !== 0) {
+            result = [];
+            result = bloggerUrl.map((img, index) => {
+                return (
+                    <div className="card">
+                        <img className="img-fluid" key={index} src={img} />
+                    </div>
+                )
+            })
         }
 
         return (
