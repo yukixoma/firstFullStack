@@ -1,11 +1,70 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import apiCaller from '../apiCaller';
 
 class MangaInfo extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            isBookmarked: false,
+            isLogin: false
+        }
+    }
+
+    componentWillMount() {
+        let username = localStorage.getItem("username");
+        let password = localStorage.getItem("password");
+        if (username && password) {
+            let { id } = this.props;
+            let isBookmarked = false;
+            let bookmarkList = localStorage.getItem("bookmarkList");
+            bookmarkList = JSON.parse(bookmarkList);
+
+            bookmarkList.forEach(e => {
+                if (e.id === id) isBookmarked = true;
+            })
+
+            this.setState({
+                isBookmarked,
+                isLogin: true
+            })
+        }
+    }
+
+    onBookmark = e => {
+        e.preventDefault();
+        let { isBookmarked, isLogin } = this.state;
+        isBookmarked = !isBookmarked;
+
+        let username = localStorage.getItem("username");
+        let password = localStorage.getItem("password");
+
+        let { id, manga } = this.props;
+
+        this.setState({
+            isBookmarked
+        })
+
+        let data = {
+            id,
+            username,
+            password,
+            isBookmarked,
+            updatedAt: manga.updatedAt
+        }
+
+        apiCaller("POST", "/bookmark", data, (res, err) => {
+            if (err) alert(err);
+            if (res) {
+                localStorage.setItem("bookmarkList", JSON.stringify(res.data));
+            };
+        })
+    }
 
     render() {
         let location = window.location.href;
         let { manga, id } = this.props;
+        let { isBookmarked, isLogin } = this.state;
         let result = [];
         let genres = [];
         if (manga.chapter) {
@@ -60,6 +119,14 @@ class MangaInfo extends Component {
                             <br />
                             <strong>Update:</strong> {manga.updatedAt}
                             <br />
+                            <br />
+                            <div className="row justify-content-center" style={{ display: isLogin ? "" : "none" }}>
+                                <button type="button" className={isBookmarked ? "btn btn-danger" : "btn btn-outline-danger"} onClick={this.onBookmark}>
+                                    <i className="far fa-bell">
+                                        <strong> {isBookmarked ? "Un-bookmark" : "Bookmarked"} </strong>
+                                    </i>
+                                </button>
+                            </div>
                         </p>
                     </div>
                 </div>

@@ -14,6 +14,7 @@ import NewManga from './Pages/NewManga';
 import NotFound from './Pages/NotFound';
 import EditMangaInfo from './Pages/EditMangaInfo';
 import EditChapter from './Pages/EditChapter';
+import Bookmark from './Pages/Bookmark';
 
 
 
@@ -34,8 +35,18 @@ class App extends Component {
                 mangas: res.data
             })
             let allManga = JSON.stringify(res.data);
-            localStorage.setItem("allManga",allManga);
-        })
+            localStorage.setItem("allManga", allManga);
+        });
+
+        let username = localStorage.getItem("username");
+        if (username) {
+            apiCaller("GET", "/fetchBookmarkList/" + username, null, (res, err) => {
+                if (err) alert("Cannot get bookmark list");
+                if (res) {
+                    localStorage.setItem("bookmarkList", JSON.stringify(res.data));
+                }
+            })
+        }
     }
 
     onLogInOut = (option) => {
@@ -52,9 +63,10 @@ class App extends Component {
                     <Header LogInOut={this.onLogInOut} />
                     <Navbar mangas={mangas} />
                     <Switch>
-                        <Route path="/" note="abc" exact
+                        <Route path="/" exact
                             render={() => <Home mangas={mangas} />}
                         />
+                        <Route path="/bookmark" exact component={Bookmark} />
                         <Route path="/new" exact component={NewManga} />
                         <Route path="/detail/:id"
                             render={(match) => <Detail match={match.match} mangas={mangas} />}
@@ -66,7 +78,7 @@ class App extends Component {
                         <Route path="/add/chapter/:id"
                             render={(match) => <AddChapter match={match.match} mangas={mangas} />}
                         />
-                         <Route path="/edit/chapter/:id"
+                        <Route path="/edit/chapter/:id"
 
                             render={(match) => <EditChapter match={match.match} mangas={mangas} />}
                         />

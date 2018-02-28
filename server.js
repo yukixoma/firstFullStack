@@ -43,11 +43,12 @@ app.use(webpackHot(compiler));
 var mongoose = require("mongoose");
 var userModel = require("./models/user");
 var manga = require("./models/manga");
+var bookmark = require("./models/bookmark");
 mongoose.connect("mongodb://yukixoma:123456789@ds046357.mlab.com:46357/manga");
 
 
 //Config express route to let React router handle routing
-var route = ["/", "/new", "/register", "/detail/*", "/read/*", "/edit/*", "/add/*", "/list/*"];
+var route = ["/", "/bookmark", "/new", "/register", "/detail/*", "/read/*", "/edit/*", "/add/*", "/list/*"];
 app.get(route, (req, res) => {
     res.sendFile(appDir + "/index.html");
 });
@@ -60,6 +61,14 @@ app.get("/fetchMangaList", (req, res) => {
         if (data) {
             res.send(data);
         }
+    })
+})
+
+app.get("/fetchBookmarkList/:username", (req, res) => {
+    let { username } = req.params;
+    bookmark.findOne({ username: username }, (err, data) => {
+        if (err) res.sendStatus(500);
+        if (data) res.send(data.bookmarked);
     })
 })
 
@@ -260,15 +269,43 @@ app.post("/register", (req, res) => {
 
 //Handle Log-in request
 app.post("/login", (req, res) => {
-    var username = req.body.username;
-    var password = req.body.password;
+    let { username, password } = req.body;
     userModel.login(username, password, (data, err) => {
-        if (err) res.send(err);
-        if (data) res.send(data);
+        if (err) res.sendStatus(401);
+        if (data) {
+            res.send(data);
+        }
     })
 })
 
-
+//Handle bookmark request 
+app.post("/bookmark", (req, res) => {
+    let { id, username, password, updatedAt, isBookmarked } = req.body;
+    userModel.login(username, password, (data, err) => {
+        if (err) res.sendStatus(401);
+        if (data) {
+            bookmark.findOne({ username: username }, (err, data) => {
+                if (err) res.sendStatus(500);
+                if (data) {
+                    if (isBookmarked) {
+                        data.bookmarked.push({
+                            id,
+                            updatedAt
+                        })
+                    } else {
+                        data.bookmarked = data.bookmarked.filter(e => {
+                            return e.id != id;
+                        })
+                    }
+                    data.save(err => {
+                        if (err) res.sendStatus(500);
+                        else res.send(data.bookmarked);
+                    })
+                }
+            })
+        }
+    })
+})
 
 
 app.post("/test", upload.array("files"), (req, res) => {

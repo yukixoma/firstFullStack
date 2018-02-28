@@ -22,11 +22,25 @@ class Header extends Component {
 
     onSubmit = (e) => {
         e.preventDefault();
-        let newLogin = this.state;
-        apiCaller("POST", "/login", newLogin, (data, err) => {
-            if (data.data === "Login success") {
-                localStorage.setItem("username", this.state.username);
-                localStorage.setItem("password", this.state.password);
+        let { username, password } = this.state;
+        apiCaller("POST", "/login", { username, password }, (res, err) => {
+            if (err) {
+                alert("Invalid username or password!");
+                this.setState({
+                    username: "",
+                    password: ""
+                })
+            }
+            if (res) {
+                localStorage.setItem("username", username);
+                localStorage.setItem("password", password);            
+
+                apiCaller("GET", "/fetchBookmarkList/" + username, null, (res, err) => {
+                    if (err) alert("Cannot get bookmark list");
+                    if (res) {
+                        localStorage.setItem("bookmarkList", JSON.stringify(res.data));
+                    }
+                })
                 this.props.LogInOut("in");
                 this.setState({
                     username: "",
@@ -34,7 +48,6 @@ class Header extends Component {
                 })
             }
         })
-
     }
 
     onLogout = (e) => {
@@ -43,6 +56,7 @@ class Header extends Component {
         localStorage.removeItem("password");
         localStorage.removeItem("manga");
         localStorage.removeItem("mangaName");
+        localStorage.removeItem("bookmarkList");
         this.setState({
             username: "",
             password: ""

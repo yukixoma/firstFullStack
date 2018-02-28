@@ -1,5 +1,6 @@
 var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
+var bookmark = require("./bookmark");
 
 var userSchema = new Schema({
 	username: String,
@@ -21,6 +22,14 @@ userModel.register = (username, password, callback) => {
 				if (err) callback(null, "Database error");
 				else callback("New user registed", null);
 			})
+
+			var newBookmark = new bookmark({
+				username: username,
+				bookmarked: []
+			})
+			newBookmark.save(err => {
+				if (err) callback(null, "Bookmark folder creat failed");
+			});
 		}
 	})
 };

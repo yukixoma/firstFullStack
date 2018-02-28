@@ -80,8 +80,8 @@ class Navbar extends Component {
                             <li className="nav-item">
                                 <NavLink className="nav-link" exact to="/"> Home </NavLink>
                             </li>
-                            <li className="nav-item">
-                                <a className="nav-link" href="#">Bookmark</a>
+                            <li className="nav-item" style={manager}>
+                            <NavLink className="nav-link" exact to="/bookmark"> Bookmark </NavLink>
                             </li>
                             <li className="nav-item">
                                 <a className="nav-link" href="#">List</a>
