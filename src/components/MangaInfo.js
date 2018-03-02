@@ -17,16 +17,17 @@ class MangaInfo extends Component {
         if (username && password) {
             let { id } = this.props;
             let isBookmarked = false;
-            let bookmarkList = localStorage.getItem("bookmarkList");
-            bookmarkList = JSON.parse(bookmarkList);
-
-            bookmarkList.forEach(e => {
-                if (e.id === id) isBookmarked = true;
-            })
-
-            this.setState({
-                isBookmarked,
-                isLogin: true
+            apiCaller("GET", `/bookmark/${id}/${username}`, null, (res, err) => {
+                if (err) alert("Bookmark load error");
+                if (res) {
+                    res.data.forEach(e => {
+                        if (e.id === id) isBookmarked = true;
+                    })
+                    this.setState({
+                        isBookmarked,
+                        isLogin: true
+                    })
+                }
             })
         }
     }
@@ -56,7 +57,7 @@ class MangaInfo extends Component {
         apiCaller("POST", "/bookmark", data, (res, err) => {
             if (err) alert(err);
             if (res) {
-                localStorage.setItem("bookmarkList", JSON.stringify(res.data));
+                console.log("Bookmark function work!");
             };
         })
     }

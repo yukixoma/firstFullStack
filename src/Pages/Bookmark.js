@@ -13,22 +13,23 @@ class Bookmark extends Component {
     }
 
     componentWillMount() {
-        let allManga = localStorage.getItem("allManga");
-        allManga = JSON.parse(allManga);
-
-        let bookmarkList = localStorage.getItem("bookmarkList");
-        bookmarkList = JSON.parse(bookmarkList);
-
+        let { mangas } = this.props;
+        let username = localStorage.getItem("username");
         let updateList = [];
 
-        bookmarkList.forEach(e => {
-            allManga.forEach(e1 => {
-                if (e.id === e1._id && e.updatedAt < e1.updatedAt) {
-                    updateList.push(e1);
-                }
-            })
+        apiCaller("GET", `/fetchBookmarkList/${username}`, null, (res, err) => {
+            if (err) alert(err);
+            if (res) {                
+                res.data.forEach(e => {
+                    mangas.forEach(e1 => {
+                        if (e.id === e1._id && e.updatedAt < e1.updatedAt) {
+                            updateList.push(e1);
+                        }
+                    })
+                })
+                this.setState({ updateList });
+            }
         })
-        this.setState({ updateList });
     }
 
     render() {

@@ -20,10 +20,9 @@ class EditChapter extends Component {
     }
 
     componentWillMount() {
-        let allManga = localStorage.getItem("allManga");
-        let id = this.props.match.params.id;
-        allManga = JSON.parse(allManga);
-        let manga = allManga.filter(e => {
+        let { mangas, match } = this.props;
+        let { id } = match.params;
+        let manga = mangas.filter(e => {
             return e._id === id;
         })
         this.setState({

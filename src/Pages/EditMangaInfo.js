@@ -17,11 +17,10 @@ class EditMangaInfo extends Component {
     componentWillMount() {
         let username = localStorage.getItem("username");
         let password = localStorage.getItem("password");
-        if (username && password) {
-            let id = this.props.match.params.id;
-            let allManga = localStorage.getItem("allManga");
-            allManga = JSON.parse(allManga);
-            let manga = allManga.filter(e => {
+        if (username && password) {            
+            let { mangas, match } = this.props;
+            let { id } = match.params;
+            let manga = mangas.filter(e => {
                 return e._id === id;
             })
             this.setState({
@@ -37,10 +36,10 @@ class EditMangaInfo extends Component {
     onChange = e => {
         let { name, value } = e.target;
         let { manga } = this.state;
-        if(name === "file") {
+        if (name === "file") {
             let isLink = e.target.files[0] ? true : false;
-            let newCover = isLink? URL.createObjectURL(e.target.files[0]) : "";
-            this.setState({newCover})
+            let newCover = isLink ? URL.createObjectURL(e.target.files[0]) : "";
+            this.setState({ newCover })
         }
         else if (name !== "newGenre") {
             manga[name] = value;
@@ -104,13 +103,13 @@ class EditMangaInfo extends Component {
         });
         let genreEdit = genre.map((e, index) => {
             return (
-                <button className="btn btn-danger" value={e} onClick={this.onRemoveGenre}>
+                <button className="btn btn-danger mr-sm-2 my-sm-2" value={e} onClick={this.onRemoveGenre}>
                     {e}
                 </button>
             )
         })
         return (
-            <div className="container" style={{marginTop: 20}}>
+            <div className="container" style={{ marginTop: 20 }}>
                 <div className="alert alert-info" role="alert">
                     {msg}
                 </div>
@@ -175,13 +174,13 @@ class EditMangaInfo extends Component {
                                         <label>Description</label>
                                         <textarea className="form-control" name="description" value={description} rows="10" required></textarea>
                                     </div>
-                                    <button className="btn btn-success" type="submit">Submit</button>
+                                    <button className="btn btn-success" type="submit">Save</button>
                                 </form>
                             </div>
                         </div>
                     </div>
                     <div className="col-lg-6">
-                        <MangaInfoPreview manga={manga} id={id} newCover={newCover}/>
+                        <MangaInfoPreview manga={manga} id={id} newCover={newCover} />
                     </div>
                 </div>
             </div>

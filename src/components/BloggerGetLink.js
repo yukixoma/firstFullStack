@@ -68,7 +68,7 @@ class BloggerGetLink extends Component {
     render() {
         return (
             <div className="card">
-                <h3 class="card-header" style={{ backgroundColor: "#428bca", color: "white" }}> Blogger Importer </h3>
+                <h3 class="card-header" style={{ backgroundColor: "#ffbb33", color: "white" }}> Blogger Importer </h3>
                 <div className="card-block" >
                     <form id="form" encType="multipart/formdata" onSubmit={this.onGetlink} onChange={this.onChange}>
                         <div className="row">

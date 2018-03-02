@@ -17,9 +17,8 @@ class EditManga extends Component {
         let username = localStorage.getItem("username");
         let password = localStorage.getItem("password");
         if (username && password) {
-            let allManga = localStorage.getItem("allManga");
-            allManga = JSON.parse(allManga);
-            let mangas = allManga.filter(e => {
+            let { mangas } = this.props;
+            mangas = mangas.filter(e => {
                 return e.username === username;
             });
             this.setState({ mangas })
@@ -107,7 +106,7 @@ class EditManga extends Component {
         }
 
         return (
-            <div className="container" style={{marginTop: 50}}>
+            <div className="container" style={{ marginTop: 50 }}>
                 <div className="card">
                     <h3 className="card-header text-center"> List of Mangas uploaded by you </h3>
                     <div className="card-block">

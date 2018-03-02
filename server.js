@@ -67,7 +67,7 @@ app.get("/fetchMangaList", (req, res) => {
 app.get("/fetchBookmarkList/:username", (req, res) => {
     let { username } = req.params;
     bookmark.findOne({ username: username }, (err, data) => {
-        if (err) res.sendStatus(500);
+        if (err) console.log(err);
         if (data) res.send(data.bookmarked);
     })
 })
@@ -109,7 +109,7 @@ app.post("/new", upload.single("file"), (req, res) => {
 });
 
 
-//Handle Edit manga info request 
+//Handle edit manga info request 
 app.post("/editMangaInfo", upload.single("file"), (req, res) => {
     let { username, password, id, name, subName, author, group, description, status } = req.body;
     var cover = "";
@@ -306,6 +306,29 @@ app.post("/bookmark", (req, res) => {
         }
     })
 })
+
+//Handle bookmarked manga readed 
+app.get("/bookmark/:id/:username", (req, res) => {
+    let { id, username } = req.params;
+    bookmark.findOne({ username: username }, (err, data) => {
+        if (err) res.sendStatus(500);
+        if (data) {
+            let { bookmarked } = data;
+            for (let i = 0; i < bookmarked.length; i++) {
+                if (bookmarked[i]["id"] === id) {
+                    let today = new Date();
+                    bookmarked[i]["updatedAt"] = today.toISOString();
+                }
+            }
+            bookmark.findOneAndUpdate({ username: username }, { $set: { bookmarked: bookmarked } }, { new: true }, (err, data) => {
+                if (err) res.sendStatus(500);
+                else res.send(data.bookmarked);
+            });
+        }
+    })
+})
+
+
 
 
 app.post("/test", upload.array("files"), (req, res) => {

@@ -75,8 +75,9 @@ class AddImage extends Component {
         let { imgIndex } = this.state;
         return (
             <div className="card">
+            <h3 class="card-header" style={{ backgroundColor: "#ffbb33", color: "white" }}> Add Image </h3>
                 <div className="card-block">
-                    <label> Add to bottom </label>
+                    <label> <strong> Add to bottom </strong> </label>
                     <form id="form" className="form-inline" encType="multipart/form-data"
                         onChange={this.onChangeAddImage}
                         onSubmit={this.onAddImage}
@@ -85,16 +86,16 @@ class AddImage extends Component {
                         <button type="submit" class="btn btn-primary">Upload</button>
                     </form>
                     <br />
-                    <label> Add to specific position {imgIndex} </label>
+                    <label> <strong> Add to specific position {imgIndex} </strong> </label>
                     <form id="form-1" className="form-inline" encType="multipart/form-data"
                         onChange={this.onChangeImg}
                         onSubmit={this.onAddImageToPosition}
                     >
                         <input value={imgIndex} name="imgIndex" style={{ display: "none" }} />
                         <input className="form-control-file" type="file" name="files" required />
-                        <button type="button" value="-" class="btn btn-danger" onClick={this.onChangePosition}> - </button>
-                        <button type="button" value="+" class="btn btn-success" onClick={this.onChangePosition}> + </button>
-                        <button type="submit" class="btn btn-primary">Upload</button>
+                        <button type="button" value="-" class="btn btn-danger mr-sm-2" onClick={this.onChangePosition}> - </button>
+                        <button type="button" value="+" class="btn btn-success mr-sm-2" onClick={this.onChangePosition}> + </button>
+                        <button type="submit" class="btn btn-primary mr-sm-2">Upload</button>
                     </form>
                 </div>
             </div>

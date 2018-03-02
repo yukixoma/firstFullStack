@@ -26,20 +26,23 @@
 
 // });
 
-var mongoose = require("mongoose");
-var manga = require("./models/manga");
-mongoose.connect("mongodb://yukixoma:123456789@ds046357.mlab.com:46357/manga");
+// var mongoose = require("mongoose");
+// var manga = require("./models/manga");
+// mongoose.connect("mongodb://yukixoma:123456789@ds046357.mlab.com:46357/manga");
 
 // manga.findOne({ _id: "5a72e1d40a498c026fc387ae" }, (err, data) => {
 //     if (err) console.log(err);
-//     if (data) console.log(data.chapter[1]);
-// })
-var bookmark = require("./models/bookmark");
+//      if (data) console.log(data.chapter[1]);
+//  })
+// var bookmark = require("./models/bookmark");
 
-var newBookmark = new bookmark({
-    username: "yukixoma",
-    bookmarked: []
-})
-newBookmark.save(err => {
-    if (err) throw err;
-});
+// var newBookmark = new bookmark({
+//     username: "yukixoma",
+//     bookmarked: []
+// })
+// newBookmark.save(err => {
+//     if (err) throw err;
+// });
+
+var today = new Date();
+console.log(today.toISOString());

@@ -15,17 +15,19 @@ class Navbar extends Component {
 
     componentWillMount() {
         let allManga = localStorage.getItem("allManga");
-        let mangas = JSON.parse(allManga);        
-        let ASCCIIonlyList = [];
-        mangas.forEach(element => {
-            ASCCIIonlyList.push({
-                name: replaceNonASCII(element.name),
+        if (allManga) {
+            let mangas = JSON.parse(allManga);
+            let ASCCIIonlyList = [];
+            mangas.forEach(element => {
+                ASCCIIonlyList.push({
+                    name: replaceNonASCII(element.name),
+                })
+            });
+            this.setState({
+                ASCCIIonlyList,
+                mangas
             })
-        });
-        this.setState({
-            ASCCIIonlyList,
-            mangas
-        })
+        }
     }
 
     onChange = (e) => {
@@ -81,7 +83,7 @@ class Navbar extends Component {
                                 <NavLink className="nav-link" exact to="/"> Home </NavLink>
                             </li>
                             <li className="nav-item" style={manager}>
-                            <NavLink className="nav-link" exact to="/bookmark"> Bookmark </NavLink>
+                                <NavLink className="nav-link" exact to="/bookmark"> Bookmarked </NavLink>
                             </li>
                             <li className="nav-item">
                                 <a className="nav-link" href="#">List</a>
