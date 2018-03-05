@@ -1,7 +1,7 @@
 /*
 Sort option 
-1: last => 
-2: first =>
+1: LIFO  
+2: FIFO
 3: A-Z
 4: Z-A
 */
@@ -33,9 +33,13 @@ const paginate = (arrPage, itemPerPage, page, sortOption) => {
     }
 
     let paginated = [];
-    if (page < 1 || !page) page = 1;
-    for (let i = (page - 1) * itemPerPage; i < arrPage.length && i < (page * itemPerPage); i++) {
-        paginated.push(arrPage[i]);
+    if (itemPerPage === null && page === null) {
+        paginated = arrPage;
+    } else {
+        if (page < 1 || !page) page = 1;
+        for (let i = (page - 1) * itemPerPage; i < arrPage.length && i < (page * itemPerPage); i++) {
+            paginated.push(arrPage[i]);
+        }
     }
     return paginated;
 }

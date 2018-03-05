@@ -92,7 +92,7 @@ class HomePage extends Component {
                                 <div className="col-sm-4">
                                     <form className="form-inline" onChange={this.onSort}>
                                         <label> Sort by &nbsp; </label>
-                                        <select class="form-control" name="sortOption" value={sortOption}>
+                                        <select className="form-control" name="sortOption" value={sortOption}>
                                             <option value="1">LIFO</option>
                                             <option value="2">FIFO</option>
                                             <option value="3">A - Z</option>

@@ -9,14 +9,14 @@ class Navbar extends Component {
         this.state = {
             ASCCIIonlyList: [],
             mangas: [],
-            searchResult: []
+            searchResult: [],
+            searchTerm: ""
         }
     }
 
-    componentWillMount() {
-        let allManga = localStorage.getItem("allManga");
-        if (allManga) {
-            let mangas = JSON.parse(allManga);
+    componentDidUpdate() {
+        if (this.state.mangas.length === 0) {
+            let { mangas } = this.props;
             let ASCCIIonlyList = [];
             mangas.forEach(element => {
                 ASCCIIonlyList.push({
@@ -33,6 +33,7 @@ class Navbar extends Component {
     onChange = (e) => {
         let { ASCCIIonlyList, mangas } = this.state;
         let { value } = e.target;
+        this.setState({ searchTerm: value });
         if (value.length > 2) {
             value = replaceNonASCII(value);
             let regex = new RegExp(value, "gi");
@@ -51,15 +52,25 @@ class Navbar extends Component {
             })
         }
     }
+
+    onClear = e => {
+        this.setState({
+            searchTerm: "",
+            searchResult: []
+        })
+        
+    }
+
     render() {
         let username = localStorage.getItem("username");
         let password = localStorage.getItem("password");
-        let { searchResult } = this.state;
+        let { searchResult, searchTerm } = this.state;
         let isResultDisplay = searchResult.length === 0 ? { display: "none" } : { display: "" };
         let searchResultDisplay = searchResult.map((item, index) => {
             return (
-                <div key={index}>
-                    <Link to={"/detail/" + item._id} target="_blank">
+                <div className="row" key={index}>
+                    <Link to={"/detail/" + item._id} target="_blank" onClick={this.onClear}>
+                        <img style={{ maxWidth: 50, maxHeight: 50 }} src={item.cover} />
                         {item.name}
                     </Link>
                     <br />
@@ -103,7 +114,7 @@ class Navbar extends Component {
                             </li>
                         </ul>
                         <form style={{ position: "relative" }} className="form-group my-2 my-lg-0">
-                            <input className="form-control mr-sm-2" type="text" placeholder="Search"
+                            <input className="form-control mr-sm-2" type="text" placeholder="Search" value={searchTerm}
                                 onChange={this.onChange}
                             />
                             <div className="form-control search-box" style={isResultDisplay}>

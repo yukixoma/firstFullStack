@@ -42,7 +42,7 @@ class App extends Component {
     }
 
     render() {
-        let { mangas } = this.state;
+        let { mangas } = this.state;        
         return (
             <BrowserRouter history={browserHistory}>
                 <Fragment>
